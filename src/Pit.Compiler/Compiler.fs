@@ -59,30 +59,40 @@ module PitCodeCompiler =
             use fs = File.Create(outputfile)
             use sw = new StreamWriter(fs)
             //sw.Write(js)
+
             if formatJs then
                 let bjs = new JsBeautify(js, new JsBeautifyOptions())
                 let b = bjs.GetResult()
                 sw.Write(b)
             else
                 sw.Write(js)
-            
+
             printfn "Generated Output File %s" outputfile
         else
             eprintfn "%A" er
 
-    let GenAst (dllPath:String) (outputfile : string) (formatJs : bool) (printAst : bool) =
-        let asm =  Assembly.LoadFrom(dllPath)
+    let CompileDll (dllPath:String) (outputfile : string) (references:string[]) (formatJs : bool) (printAst : bool) =
+        references |> Array.iter(fun r -> Assembly.LoadFrom(r) |> ignore)
+        AppDomain.CurrentDomain.add_AssemblyResolve(new ResolveEventHandler(fun s e ->
+            let assemblies = AppDomain.CurrentDomain.GetAssemblies()
+            match  assemblies |> Array.tryFind(fun f -> f.FullName = e.Name) with
+            | Some(asm) -> asm
+            | None      ->
+                /// backup plan if no references are resolved we try to load it from the dll path
+                let name = e.Name.Substring(0,e.Name.IndexOf(","))
+                let path = dllPath.Substring(0,dllPath.LastIndexOf("\\"))
+                let getFile(f:string) =
+                    let idx = f.LastIndexOf("\\") + 1
+                    f.Substring(idx,f.Length - idx)
+                match Directory.EnumerateFiles(path) |> Seq.tryFind(fun f -> getFile(f).Contains(name)) with
+                | Some(file) -> Assembly.LoadFrom(file)
+                | None       -> null
+        ))
+        let asm = Assembly.LoadFrom(dllPath)
         if asm.GetCustomAttributes(typeof<PitAssemblyAttribute>, true).Length = 1 then
             let types = asm.GetExportedTypes()
             let ast = TypeParser.getAst types
-            let js = ast |> JavaScriptWriter.getJS (*seq {
-                for a in ast do
-                    if printAst then
-                        printfn "%A" a
-                    let jscript = JavaScriptWriter.getJS a
-                    yield jscript
-            }*)
-            //let res =  Seq.toArray(js)
+            let js = ast |> JavaScriptWriter.getJS
             use fs = File.Create(outputfile)
             use sw = new StreamWriter(fs)
             if formatJs then

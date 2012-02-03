@@ -17,12 +17,13 @@ let main args =
 pfc.exe test.fsproj /o:output.js /ft:true
 
 /o - Output file
+/r - Reference dlls
 /ft - Format JS true / false
 /ast - Show AST true / false"
         printfn "%s" s
     else
         let parseArg(cmp) =
-            let bitString = args.FirstOrDefault((fun s -> s.Contains(cmp)))            
+            let bitString = args.FirstOrDefault((fun s -> s.Contains(cmp)))
             if bitString <> null && bitString <> String.Empty then
                 let b = bitString.Split([|':'|])
                 Some(b.[0], b.[1])
@@ -31,8 +32,8 @@ pfc.exe test.fsproj /o:output.js /ft:true
 
         let opfile = args.[1].Replace("/o:","")
 
-        let mutable formatJsArg = parseArg("/ft:")            
-        let mutable formatJs = 
+        let mutable formatJsArg = parseArg("/ft:")
+        let mutable formatJs =
             match formatJsArg with
             | Some(j, j1) -> Boolean.Parse(j1)
             | _ -> false
@@ -43,13 +44,13 @@ pfc.exe test.fsproj /o:output.js /ft:true
             | Some(j, j1) -> Boolean.Parse(j1)
             | _ -> false
 
-        if args.[0].EndsWith("fsproj") then 
+        if args.[0].EndsWith("fsproj") then
             let projName = args.[0]
             let projFolderLoc = projName.Substring(0, projName.LastIndexOf("\\"))
             let outputFolderLoc = Path.Combine(Environment.GetEnvironmentVariable("PitLocation", EnvironmentVariableTarget.User) , "bin")
-            //let outputFolderLoc = projFolderLoc + @"\bin\Release\"        
-      
-        
+            //let outputFolderLoc = projFolderLoc + @"\bin\Release\"
+
+
             let xdoc = XDocument.Load(projName)
             let rootEl = xdoc.Root
             let els = rootEl.Elements().Where((fun (s : XElement) -> s.Name.LocalName = "ItemGroup"))
@@ -60,43 +61,43 @@ pfc.exe test.fsproj /o:output.js /ft:true
                     c
                 )
                 |> Seq.filter(fun (x : XElement[])-> x.Length > 0)
-            let assemblies = 
+            let assemblies =
                 seq {
                     for x in asmEls do
-                        for xe in x do                        
+                        for xe in x do
                             let asmName = xe.Attribute(xname "Include").Value
-                            //if hint path                
+                            //if hint path
                             let hint = xe.Elements().Where((fun (s : XElement) -> s.Name.LocalName = "HintPath")).ToArray()
                             if hint.Length > 0 then
                                 let hintPath = hint.First().Value
                                 yield hintPath
                             else
-                                if xe.Name.LocalName = "ProjectReference" then 
-                                    let el = xe.Elements().First()                                
+                                if xe.Name.LocalName = "ProjectReference" then
+                                    let el = xe.Elements().First()
                                     yield el.Value + ".dll"
                                 else yield asmName + ".dll"
                 }
                 |> Seq.filter(fun x -> x <> String.Empty && x.Contains("Pit"))
                 |> Seq.map(fun x ->
-                    let dll = 
-                        if x.Contains("\\") then 
+                    let dll =
+                        if x.Contains("\\") then
                             let xi = x.LastIndexOf("\\") + 1
-                            outputFolderLoc ++ x.Substring(xi, x.Length - xi) 
+                            outputFolderLoc ++ x.Substring(xi, x.Length - xi)
                         else x
                     dll
                 )
                 |> Seq.toArray
 
-            printfn "%A" assemblies 
+            printfn "%A" assemblies
 
             let compileEls =
                 els
-                |> Seq.map(fun (x : XElement) -> 
+                |> Seq.map(fun (x : XElement) ->
                     let c = x.Elements().ToArray() |> Array.filter(fun (xe : XElement) -> xe.Name.LocalName = "Compile" )
                     c
                 )
                 |> Seq.filter(fun (x : XElement[])-> x.Length > 0)
-            let srcFiles = 
+            let srcFiles =
                 seq {
                     for x in compileEls do
                         for xe in x do
@@ -106,12 +107,17 @@ pfc.exe test.fsproj /o:output.js /ft:true
                 |> Seq.toArray
             printfn "%A" srcFiles
 
-            if srcFiles.Length > 0 then            
+            if srcFiles.Length > 0 then
                 PitCodeCompiler.Compile srcFiles assemblies opfile projFolderLoc formatJs printAst
 
-        else 
+        else
+            let references =
+                args
+                |> Array.filter(fun f -> f.Contains("/r:"))
+                |> Array.map(fun f -> if f <> "" then f.Substring(3,f.Length-3) else "")
+                |> Array.filter(fun f -> f.EndsWith(".dll"))
             let dllPath = args.[0]
-            PitCodeCompiler.GenAst dllPath opfile formatJs printAst
+            PitCodeCompiler.CompileDll dllPath opfile references formatJs printAst
 
     //Console.ReadKey(true) |> ignore
     0
