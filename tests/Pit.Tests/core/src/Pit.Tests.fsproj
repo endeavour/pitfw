@@ -94,6 +94,11 @@
       <Project>{9075ed59-7975-4e2f-a44e-35fe8b4cabc8}</Project>
       <Private>True</Private>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\src\Pit.JQuery\Pit.JQuery.fsproj">
+      <Name>Pit.JQuery</Name>
+      <Project>{32fb264f-02aa-4b4e-a9a2-336fadd575a3}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\FSharp\1.0\Microsoft.FSharp.Targets" Condition="!Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft F#\v4.0\Microsoft.FSharp.Targets" Condition=" Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />

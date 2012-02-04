@@ -5,12 +5,12 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{d8471f0a-b4ac-45fb-a701-bbe23df50814}</ProjectGuid>
+    <ProjectGuid>{32fb264f-02aa-4b4e-a9a2-336fadd575a3}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Pit.Common</RootNamespace>
-    <AssemblyName>Pit.Common</AssemblyName>
+    <RootNamespace>Pit.JQuery</RootNamespace>
+    <AssemblyName>Pit.JQuery</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <Name>Pit.Common</Name>
+    <Name>Pit.JQuery</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,7 +20,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Debug\Pit.Common.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\Pit.JQuery.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,7 +29,7 @@
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Release\Pit.Common.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\Pit.JQuery.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
@@ -39,11 +39,21 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes.fs" />
-    <Compile Include="Ast.fs" />
-    <Compile Include="Interfaces.fs" />
-    <Compile Include="Utils.fs" />
-    <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="Common.fs" />
+    <Compile Include="CompilerExtension.fs" />
+    <Compile Include="JQuery.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Pit.Common\Pit.Common.fsproj">
+      <Name>Pit.Common</Name>
+      <Project>{d8471f0a-b4ac-45fb-a701-bbe23df50814}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Pit.Core\Pit.Core.fsproj">
+      <Name>Pit.Core</Name>
+      <Project>{9075ed59-7975-4e2f-a44e-35fe8b4cabc8}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\FSharp\1.0\Microsoft.FSharp.Targets" Condition="!Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft F#\v4.0\Microsoft.FSharp.Targets" Condition=" Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />

@@ -44,7 +44,7 @@ let genf (t: Type -> bool) (outputFile:string)=
 let genAst() =
     genAssembly (Assembly.LoadFile(System.IO.Directory.GetCurrentDirectory() + @"\Pit.Core.dll")) (fun t -> true) "pit.core.js"
 
-genAst()
+//genAst()
 
 //// generate js for the test
 let genTests() =
@@ -109,10 +109,10 @@ let genTests() =
 #endif
     printfn "Done..."
 
-genTests()
+//genTests()
 
 //genAssembly (Assembly.LoadFile(System.IO.Directory.GetCurrentDirectory() + @"\Pit.Core.dll")) (fun t -> t.Name.Contains("Exception")) "output.js"
-//genf (fun t -> t.Name.Contains("OverloadedCtorsTests")) "output.js"
+genf (fun t -> t.Name.Contains("TestModule")) "output.js"
 (*let e =
     <@
         //let r = raise(new System.InvalidOperationException("Invalid action"))
