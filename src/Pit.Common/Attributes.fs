@@ -36,6 +36,7 @@ type JsIgnoreAttribute() =
     let mutable ignoreCall      = false
     let mutable ignoreTypeName  = false
     let mutable ignoreItemAccess = false
+    let mutable ignorePipeline  = false
 
     member x.IgnoreNamespace
         with get() = ignoreNamespace
@@ -64,6 +65,10 @@ type JsIgnoreAttribute() =
     member x.IgnoreItemAccess
         with get() = ignoreItemAccess
         and set(v) = ignoreItemAccess <- v
+
+    member x.IgnorePipeline
+        with get() = ignorePipeline
+        and set(v) = ignorePipeline <- v
 
 [<AttributeUsage(AttributeTargets.Method)>]
 type DomEntryPointAttribute() =

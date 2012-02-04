@@ -17,7 +17,7 @@ type DomSource =
 
     static member Of(el:DomElement) =
         new DomSource(el.InternalScriptObject)
-            
+
     member x.Media
         with get() = x.source.GetProperty<string>("media")
         and set(v: string) = x.source.SetProperty("media", v)
@@ -43,7 +43,7 @@ type DomAudio =
     static member Of(el:DomElement) =
         new DomAudio(el.InternalScriptObject)
 
-    member x.AutoPlay
+    (*member x.AutoPlay
         with get() = x.audio.GetProperty<string>("autoplay")
         and set(v: string) = x.audio.SetProperty("autoplay", v)
 
@@ -53,15 +53,25 @@ type DomAudio =
 
     member x.Loop
         with get() = x.audio.GetProperty<string>("loop")
-        and set(v: string) = x.audio.SetProperty("loop", v)
+        and set(v: string) = x.audio.SetProperty("loop", v)*)
 
     member x.PreLoad
         with get() = x.audio.GetProperty<string>("preload")
         and set(v: string) = x.audio.SetProperty("preload", v)
-    
+
     member x.Src
         with get() = x.audio.GetProperty<string>("src")
         and set(v: string) = x.audio.SetProperty("src", v)
+
+    member x.Loaded
+        with get() = x.audio.GetProperty<bool>("loaded")
+        and set(v:bool) = x.audio.SetProperty("loaded",v)
+
+    member x.Load() = x.audio.Invoke("load",[||]) |> ignore
+
+    member x.Play() = x.audio.Invoke("play",[||]) |> ignore
+
+    member x.Pause() = x.audio.Invoke("pause",[||]) |> ignore
 
 [<AllowNullLiteral>]
 type DomVideo =
@@ -102,7 +112,7 @@ type DomVideo =
     member x.PreLoad
         with get() = x.video.GetProperty<string>("preload")
         and set(v: string) = x.video.SetProperty("preload", v)
-    
+
     member x.Src
         with get() = x.video.GetProperty<string>("src")
         and set(v: string) = x.video.SetProperty("src", v)

@@ -75,7 +75,12 @@ module AstParser =
                                 match carg with
                                 | Var x when (lets.ContainsKey x) ->
                                     let newArg = lets |> Map.find (x)
-                                    newArg
+                                    match newArg with
+                                    | Patterns.TupleGet(Var(arg),idx) when (lets.ContainsKey(arg)) ->
+                                        match lets.[arg] with
+                                        | Patterns.NewTuple(args) -> args.[idx]
+                                        | _ -> failwith "Unrecognized sequence in tuple args"
+                                    | _ -> newArg
                                 | Coerce(Var x, _ ) when (lets.ContainsKey x) -> // when interface property is accessed we need to take it out from the Coercion
                                     lets |> Map.find (x)
                                 | _ -> carg]
@@ -182,7 +187,7 @@ module AstParser =
                 | x                 -> InstanceOf(l, r) // return back the original object
             | x -> x)
 
-    let getAst(quote : Expr) =
+    let getAst(quote:Expr) =
         let rec traverse node (map:Map<string, string list>) =
             match node with
 
@@ -284,7 +289,7 @@ module AstParser =
                     | _ ->
                         Function(None, [|vr|], Block([|body |> wrapReturn|]))
                 else
-                    Function(None, [|vr|], Block([|body |> wrapReturn|]))
+                    Function(None, [|vr|], Block([|body |> wrapReturn|])) |> Closure
 
             | Patterns.Call(expr1, md, args) ->
                 let args1 = (getArgs args) |> List.toArray
@@ -394,29 +399,34 @@ module AstParser =
                         if arguments.Length = 0 then
                             Call(node, [|Unit|])
                         elif Microsoft.FSharp.Reflection.FSharpType.IsModule md.DeclaringType then
-                            match md with
-                            | x when not(isIgnoreTupleArgs md) && not(isJsExtensionType md) ->
-                                let temp = ref node
-                                for a in arguments do
-                                    temp := Call(temp.Value, [|a|])
-                                temp.Value
-                            | x when isJsExtensionType(md) && arguments.Length > 0 ->
-                                // example extension types for Dom types or for types which only require
-                                // to generate JS properly
-                                let extType   = arguments.[0] // first argument will always be the object itself in extension types
-                                let arguments = arguments |> Array.skip(1)
-                                Call(MemberAccessNode(node,extType), arguments)
-                            | _ -> Call(node, arguments)
-
-                            (*if not(isIgnoreTupleArgs md) then // example Math.pow(x,y)
-                                let temp = ref node
-                                for a in arguments do
-                                    temp := Call(temp.Value, [|a|])
-                                temp.Value
-                            else
-                                Call(node, arguments)*)
+                            let instrument(node:Node) =
+                                match getAstParserExt(md.DeclaringType) with
+                                | Some(ext) ->
+                                    let tx = ext.GetParserExtension()
+                                    transformAst node tx.Projection tx.Transform
+                                | None -> node
+                            let callNode =
+                                match md with
+                                | x when not(isIgnoreTupleArgs md) && not(isJsExtensionType md) ->
+                                    let temp = ref node
+                                    for a in arguments do
+                                        temp := Call(temp.Value, [|a|])
+                                    temp.Value
+                                | x when isJsExtensionType(md) && arguments.Length > 0 ->
+                                    // example extension types for Dom types or for types which only require
+                                    // to generate JS properly
+                                    let extType   = arguments.[0] // first argument will always be the object itself in extension types
+                                    let arguments = arguments |> Array.skip(1)
+                                    Call(MemberAccessNode(node,extType), arguments)
+                                | _ -> Call(node, arguments)
+                            callNode |> instrument
                         else
-                            Call(node, arguments)
+                            if getCompilationArgumentsAttr(md) then
+                                let temp = ref node
+                                for a in arguments do
+                                    temp := Call(temp.Value, [|a|])
+                                temp.Value
+                            else Call(node, arguments)
 
                     match expr1 with
                     | Some expr ->
@@ -533,13 +543,14 @@ module AstParser =
                     match body with
                     | Block(b) -> // handling match conditions where match has "when" clause, intermediate variables are created here
                         let vars, body = b |> Array.partition(fun t -> match t with | DeclareStatement(_,_) -> true | _ -> false)
-                        let ifStatement = IfElse(statement.[0], Block(body), elseStatement)
+                        let ifStatement = IfElse(statement.[0], Block(body |> Array.append vars), elseStatement)
                         //let ifStatement = IfElse(statement.[0] , Block(body) |> transformClosure, elseStatement)
-                        let after = Call(Function(None, [|Unit|], Block([|ifStatement|] |> Array.append vars) |> wrapClosureCall |> wrapReturn), [||])
+                        let letvars = st |> Array.take(st.Length - 1) |> Array.rev
+                        let after = Call(Function(None, [|Unit|], Block([|ifStatement|] |> Array.append letvars ) |> wrapClosureCall |> wrapReturn), [||])
                         //let after = Block([|ifStatement|] |> Array.append vars)|> wrapClosureCall |> wrapReturn
                         // need to append the vars generated in the statement too, this create duplicate variables, but its fine for use-cases where there are declarations done inside an IF block, ex: if(latest=e.GetCurrent(); (some condition){ }
-                        let letvars = st |> Array.take(st.Length - 1) |> Array.rev
-                        Block([|after|] |> Array.append letvars)
+                        //Block([|after|] |> Array.append letvars)
+                        Block([|after|])
                     | _ ->
                         let ifStatement = IfElse(statement.[0], body, elseStatement)
                         let vars = st |> Array.take(st.Length - 1) |> Array.rev

@@ -66,6 +66,10 @@ module TypeParser =
             Assign(MemberAccess(fi.Name |> cleanName, Variable("this")), getDefValue(fi))
         )
 
+    let getExtensionType (t:Type) =
+        let attr = t.GetCustomAttributes(typeof<AstParserExtensionAttribute>, false)
+        if attr.Length > 0 then Some(attr.[0] :?> AstParserExtensionAttribute) else None
+
     module Property =
         // strip extension method type property gets
         let strip (exp: Expr) =
@@ -188,6 +192,7 @@ module TypeParser =
                             let fnPr, _ = fnAst.[i]
                             match fnPr with
                             | Function(s, pr, body) -> getFunWrapperAst m pr
+                            | Closure(Function(s,pr,body)) -> getFunWrapperAst m pr
                             | _ -> failwith "no function body"
                     )
 
@@ -259,6 +264,7 @@ module TypeParser =
                                     match q with
                                     | Patterns.Lambda(v, exp) -> exp |> ClassParser.parse m
                                     | _                       -> AstParser.getAst q
+                                    |> ClassParser.closure
                                 Assign(MemberAccess(getMethodName m, MemberAccess("prototype",Variable(cleanName(t.Name)))), ast)
                     )|]
 
@@ -302,8 +308,14 @@ module TypeParser =
                                                         Function(None, t |> Array.append args, y)
                                                     | _ -> x
                                             | _ -> Function(None, args, b)
-                            let declTy = if m1.DeclaringType <> null then m1.DeclaringType else m1
-                            let mi = MemberAccess(m1.Name, MemberAccess(moduleName, Variable(declTy.Name)))
+                            //let hasDeclaringType = m1.DeclaringType <> null
+                            //let declTy = if hasDeclaringType then m1.DeclaringType else m1
+
+                            /// the first value contains the type name for the extension type
+                            let tyName = m.Name.Split('.').[0] |> cleanName
+                            let mi     = MemberAccess(tyName,Variable(moduleName))
+                                //if hasDeclaringType then MemberAccess(m1.Name |> cleanName, MemberAccess(moduleName, Variable(declTy.Name)))
+                                //else MemberAccess(declTy.Name |> cleanName,Variable(moduleName))
                             Assign(MemberAccess(split.[1], mi), func)
                         | Function(None, args, b) when isDomEntryMethod(m)=true ->
                             Block([|Call(MemberAccess ("domReady",Variable ("DOM")),[|Function (None, [||], b)|])|])
@@ -322,10 +334,15 @@ module TypeParser =
                 |> Seq.filter(fun m -> m.Name.Contains("."))
                 |> Seq.distinctBy(fun m -> m.GetParameters().[0].ParameterType)
                 |> Seq.map(fun m ->
-                    let m1 = m.GetParameters().[0].ParameterType
-                    let declTy = if m1.DeclaringType <> null then m1.DeclaringType else m1
-                    let mi = MemberAccess(m1.Name, MemberAccess(moduleName, Variable(declTy.Name)))
-                    Class(m1.Name, inherits, mi, [||], [||], [||])
+                    //let m1      = m.GetParameters().[0].ParameterType
+                    //let hasDeclaringType = m1.DeclaringType <> null
+                    //let declTy = if hasDeclaringType then m1.DeclaringType else m1
+                    /// the first value contains the type name for the extension type
+                    let tyName = m.Name.Split('.').[0] |> cleanName
+                    let mi     = MemberAccess(tyName,Variable(moduleName))
+                        //if hasDeclaringType then MemberAccess(tyName, MemberAccess(moduleName, Variable(tyName)))
+                        //else MemberAccess(tyName,Variable(moduleName))
+                    Class(tyName, inherits, mi, [||], [||], [||])
                 )
                 |> Seq.toArray
 
@@ -421,7 +438,7 @@ module TypeParser =
             if t.BaseType = typeof<Enum> then
                 let values = Enum.GetValues(t) :?> int[]
                 let enums = values |> Array.map (fun v -> Enum.GetName(t,v))
-                let m = getMemberAccess(t.Name, t.DeclaringType, true)
+                let m = getClassTypeName(t)
                 [|EnumNode(m, enums)|]
 
             elif FSharpType.IsModule t then

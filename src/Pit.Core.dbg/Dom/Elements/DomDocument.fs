@@ -5,6 +5,7 @@ open Utils
 
 [<AllowNullLiteral>]
 type DomBody(scriptObj : ScriptObject) =
+    inherit DomElement(scriptObj)
 
     static member Of(scriptObj : ScriptObject) =
         new DomBody(scriptObj)
@@ -118,7 +119,7 @@ type DomDocument =
         new DomElement(el)
 
     member x.CreateElementNS(ns:String, tagName : string) =
-        let el = x.htmlDoc.Invoke("createElementNS", box(ns) , box(tagName)) :?> ScriptObject        
+        let el = x.htmlDoc.Invoke("createElementNS", box(ns) , box(tagName)) :?> ScriptObject
         new DomElement(el)
 
     member x.CreateTextNode(text : string) =

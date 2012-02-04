@@ -189,7 +189,7 @@ module JavaScriptWriter =
                 blockSb |> append(";})();")
                 blockSb.ToString()
             | EnumNode(m, v) ->
-                let eb = sb(str "var %s=" (traverse m) + "{")
+                let eb = sb(str "%s=" (traverse m) + "{")
                 v |> Array.iteri(fun i e ->
                     str "%s:" e + "{}" @@ eb
                     if i < v.Length - 1 then "," @@ eb

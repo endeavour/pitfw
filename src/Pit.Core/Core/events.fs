@@ -141,9 +141,6 @@ open Pit.Javascript
         member this.Publish =
             new EventPublish<'T>(eventFuncs) :> IEvent<'T>
 
-
-
-
     module EventModule =
 
         [<CompiledName("Create")>]

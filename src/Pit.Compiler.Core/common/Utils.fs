@@ -116,12 +116,22 @@ module Utils =
         else
             false
 
+    let getCompilationArgumentsAttr (md:MethodInfo) =
+        let attr = md.GetCustomAttributes(typeof<CompilationArgumentCountsAttribute>,false)
+        if attr.Length > 0 then true
+        else false
+
     let isJsExtensionType (md:MethodInfo) =
         let attr = md.GetCustomAttributes(typeof<JsExtensionTypeAttribute>,false)
         if attr.Length > 0 then true
         else
             let attr = md.DeclaringType.GetCustomAttributes(typeof<JsExtensionTypeAttribute>,false)
             if attr.Length > 0 then true else false
+
+    let getAstParserExt(t:Type) =
+        let attr = t.GetCustomAttributes(typeof<Pit.Compiler.AstParserExtensionAttribute>,false)
+        if attr.Length > 0 then attr.[0] :?> Pit.Compiler.AstParserExtensionAttribute |> Some
+        else None
 
     let getAliasAttr (t:Type) =
         let attr =
@@ -295,6 +305,10 @@ module Utils =
 [<AutoOpen>]
 module AstHelpers =
 
+    let getClassTypeName (t:Type) =
+        let classType = if t.DeclaringType <> null then t.DeclaringType else t
+        getMemberAccess (getDeclaredTypeName(t, String.Empty), classType, true)
+
     let rewriteBody body =
         match body with
         | Block(children) ->
@@ -406,7 +420,7 @@ module AstHelpers =
         | :? string -> StringNode(Some(x :?> string))
         | :? char   -> StringNode(Some(x :?> char |> string))
         | :? float  -> Float(Some(x :?> float))
-        | _ -> if x <> null then MemberAccess(x.ToString(), getMemberAccess(y.Name, y.DeclaringType, true)) else Node.Null //failwith "Not supported literal type"
+        | _ -> if x <> null then MemberAccess(x.ToString(), getClassTypeName(y)) else Node.Null //failwith "Not supported literal type"
 
 #if SILVERLIGHT
     [<AutoOpen>]

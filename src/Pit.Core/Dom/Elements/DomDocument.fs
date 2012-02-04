@@ -7,7 +7,7 @@ open Pit
 [<Alias("body")>]
 [<AllowNullLiteral>]
 type DomBody() =
-    inherit DomObject()
+    inherit DomElement()
 
     static member Of(obj : DomObject) =
         new DomBody()

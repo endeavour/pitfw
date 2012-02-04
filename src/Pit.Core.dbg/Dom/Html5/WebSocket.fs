@@ -42,8 +42,18 @@ open System.Windows.Browser
 
         new(url:string) = new WebSocket(url, [||])
 
+        (*
+            CONNECTING (numeric value 0)
+            The connection has not yet been established.
+            OPEN (numeric value 1)
+            The WebSocket connection is established and communication is possible.
+            CLOSING (numeric value 2)
+            The connection is going through the closing handshake.
+            CLOSED (numeric value 3)
+            The connection has been closed or could not be opened.
+        *)
         member x.ReadyState =
-            socket.GetProperty("readyState") :?> string
+            socket.GetProperty("readyState") :?> int
 
         member x.BufferedAmount =
             socket.GetProperty("bufferedAmount") |> toInt

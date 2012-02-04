@@ -35,7 +35,7 @@ type DomAudio() =
     static member Of(el:DomElement) =
         new DomAudio()
 
-    [<CompileTo("autoplay")>]
+    (*[<CompileTo("autoplay")>]
     member x.AutoPlay
         with get() = ""
         and set(v: string) = ()
@@ -48,7 +48,7 @@ type DomAudio() =
     [<CompileTo("loop")>]
     member x.Loop
         with get() = ""
-        and set(v: string) = ()
+        and set(v: string) = ()*)
 
     [<CompileTo("preload")>]
     member x.PreLoad
@@ -59,6 +59,20 @@ type DomAudio() =
     member x.Src
         with get() = ""
         and set(v: string) = ()
+
+    [<CompileTo("loaded")>]
+    member x.Loaded
+        with get() = false
+        and set(v:bool) = ()
+
+    [<CompileTo("load")>]
+    member x.Load() = ()
+
+    [<CompileTo("play")>]
+    member x.Play() = ()
+
+    [<CompileTo("pause")>]
+    member x.Pause() = ()
 
 
 [<JsIgnoreAttribute(IgnoreGetSet=true)>]

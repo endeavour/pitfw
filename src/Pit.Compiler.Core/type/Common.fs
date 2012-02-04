@@ -14,12 +14,14 @@ open System.Reflection
                 | Variable(t) -> t.ToLower() = p.ToLower()
                 | _           -> false
 
-            let members = [|for p in properties do yield
-                                                    Assign(MemberAccess(p.Name, Variable("this")),
-                                                    match ctorParameters |> Array.tryFind(fun t -> getCtorParam t p.Name) with
-                                                    | Some(d)   -> d
-                                                    | _         -> Unit
-                                                    )|]
+            let members = [|
+                            for p in properties do
+                                yield
+                                    Assign(MemberAccess(p.Name, Variable("this")),
+                                    match ctorParameters |> Array.tryFind(fun t -> getCtorParam t p.Name) with
+                                    | Some(d)   -> d
+                                    | _         -> Unit)
+                          |]
             Block(members)
 
         let getCtorBody e =
@@ -91,7 +93,12 @@ open System.Reflection
                     [|dec;Block(ar);Return(var)|] |> Block
             | _  ->
                 let ast = (AstParser.getAst e)
-                if isDefaultCtor then ast else ast |> rewriteBodyWithReturn
+                if isDefaultCtor then
+                    match ast with
+                    /// appending an alias to "this", if there is a method call with this it will be replaced by thisObject in the ctor
+                    | Block(ast) -> Block( (ast |> Array.map AstParser.transformClosure) |> Array.append [|DeclareStatement(Variable("thisObject"),Variable("this"))|] )
+                    | _          -> ast
+                else ast |> rewriteBodyWithReturn
 
         let createCtorsAst(ctors : seq<ConstructorInfo>, t : Type) =
             let ctorStr = ".__init__ =function(idx, lambda){if (typeof this['ctors'] == 'undefined') {this['ctors'] = [];}var ctors = this['ctors'];ctors[idx] = lambda;};"
@@ -141,7 +148,34 @@ open System.Reflection
                     | _ -> acc, exp'
                 let args, exp' = getTuplePositions x [||]
                 Function(None, args, AstParser.getAst exp' |> rewriteBodyWithReturn)
+            (*| Patterns.Lambda(v, Patterns.Lambda(x, e)) ->
+                match AstParser.getAst exp with
+                | Function(n,args, Block(nodes)) ->
+                    Function(n,args,Block(nodes |> Array.map AstParser.transformClosure |> Array.append [|DeclareStatement(Variable("thisObject"),Variable("this"))|]))
+                | _ -> failwith "Unrecognized partial function sequence"*)
             | _ -> AstParser.getAst exp
+
+        (*let projectionClosure (ast:Node) (fn:Node->Node) =
+            match ast with
+            | Function(n,args,Block([|Return(Function(n1,args1,nodes))|])) ->
+                let a = ast
+                ()
+            | _ ->
+                ()
+            None
+
+        let cleanClosure (ast:Node) =
+            AstParser.transformAst (ast) projectionClosure (fun ast f -> ast)*)
+
+        let closure (ast:Node) =
+            match ast with
+            | Function(n,args,body) ->
+                let body = [|body |> AstParser.transformClosure|] |> Array.append [|DeclareStatement(Variable("thisObject"),Variable("this"))|] |> Block
+                Function(n,args,body)
+            | Closure(Function(n,args,body)) ->
+                let body = [|body |> AstParser.transformClosure|] |> Array.append [|DeclareStatement(Variable("thisObject"),Variable("this"))|] |> Block
+                Closure(Function(n,args,body))
+            | _ -> failwith "Unrecognized sequence in function body"
 
     module InterfaceParser =
 
