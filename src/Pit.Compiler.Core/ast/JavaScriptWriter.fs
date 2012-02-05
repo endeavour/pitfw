@@ -147,7 +147,10 @@ module JavaScriptWriter =
                 let ife = sb((str "if (%s)" (traverse cond)) + "{" + (traverse b))
                 match e with
                 | Some(el) ->
-                    "} else {" + (traverse el) + "}" @@ ife
+                    match el with
+                    | Return(Call(Closure(Function(None,[|Variable(x)|],(IfElse(c,b,e)))), [|Variable(y)|])) -> "} else " + (traverse (IfElse(c,b,e))) @@ ife // generating elseif statements
+                    //| Return((IfElse(c,b,e))) -> "} else " + (traverse (IfElse(c,b,e))) @@ ife // generating elseif statements
+                    | _             -> "} else {" + (traverse el) + "}" @@ ife
                 | _ -> "}" @@ ife
                 ife.ToString()
             | While(l, r) ->
