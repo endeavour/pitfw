@@ -9,18 +9,6 @@ open Microsoft.FSharp.Reflection
 open System
 open Pit
 
-module Array =
-
-    let take (count: int) (a : 'a[]) =
-        let arr : 'a[] = Array.zeroCreate count
-        Array.Copy(a, arr, count)
-        arr
-
-    let skip (index:int) (a : 'a[]) =
-        let arr : 'a[] = Array.zeroCreate (a.Length - index)
-        Array.Copy(a, index, arr, 0, arr.Length)
-        arr
-
 [<AutoOpen>]
 module Utils =
 
