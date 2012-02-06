@@ -11,6 +11,7 @@
 * partial functions code generation
 * added closure wraps for all function calls in a type
 * extension methods code gen fix
+
 ####Feature
 * jQuery support added
 
