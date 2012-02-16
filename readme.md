@@ -32,62 +32,27 @@ Additionally, If someone is interested in creating component controls using Pit,
     * Basic diagram controls (using SVG/HTML5 Canvas) 
     * Basic DataGrid
 
-##Release Notes
-###Pit v0.2
-
-####Features
-* Array2D, F# Set, F# String extensions
-* Operator overloading for types, records, unions
-* AJAX / XMLHttpRequest both in debug/JS mode
-* HTML5 DOM elements & SVG
-* Custom Library project templates
-* Mac MonoDevelop support
-
-####Fixes
-* Fix closure issue in for loops
-* Fix mapping .NET string functions to JsString
-* Fix tuple value code generation in function parameters
-* Fix type extensions for DOM type classes
-* Fix overloaded constructors issue
-* Fix overloaded members
-* Fix code generation issue with static property GETTER
-* Fix missing method for Window.setInterval
-
-###Pit v0.1
-
-* Support all features of F# that can be translated using "ReflectedDefinitionAttribute"
-* Clean JS code generation
-* Support below major F# libraries
-  * Seq
-  * List
-  * Array
-  * Event
-  * IObservable
-  * Computation Expressions
-* Full HTML DOM and HTML5 Canvas Support
-* Visual Studio 2010 integration with Application Project Templates
-  * Debugging support for F# code
-  * Build support with Pit compiler
-  * JavaScript error notification
-
 ## Building Pit Source:
 We recently added [Fake](https://github.com/forki/FAKE "Fake") scripts (build tool for F#). Run the build.bat to execute the scripts, all related dlls will be placed in the bin\debug or bin\release folder.
 
 Additionally to create Vsix and setup, use the run.bat which executes a set of MSbuild project files. This requires additional setup to be installed, since we create VS Extensions, Please download:
+
 * Visual Studio 2010 SDK [here](http://www.microsoft.com/download/en/details.aspx?displaylang=en&id=2680 "link")
 * Windows Installer XML (WiX) toolset 3.6 [here](http://wix.codeplex.com/releases/view/75656 "link")
      
 ##How to contribute?
-If you would like to contribute to the Pit project you could take up any of the features that is available in the roadmap / any custom feature that you think would provide nice value. You can email mohamedsuhaiba@live.in for dicussing and getting started with it. Small note here, Pit team may be working on some of the features already, so it's at best to check once before you fork off and start on it.
+If you would like to contribute to the Pit project you could take up any of the features that is available in the roadmap / any custom feature that you think would provide nice value. You can email fahad@pitfw.org for dicussing and getting started with it. Small note here, Pit team may be working on some of the features already, so it's at best to check once before you fork off and start on it.
 
 And if you want to work on bug fixes, go ahead and fork it off no need to check with us! Send us couple of test cases along with it.
 
 Note: All features should pass the existing tests found in the "tests" folder and also provide new tests for the feature, only then the feature will be accepted for inclusion in the main branch.
 
 ##Reporting issues
-Bugs can be filed using the Issues tab in Github (https://github.com/fahadsuhaib/pitfw/issues). Make sure you have got the following things
-    * Sample with clear reproducing steps
-    * If possible, provide a screenshot and describe the error in a simple way
+Bugs can be filed using the Issues tab in Github (https://github.com/fsharp/pitfw/issues). Make sure you have got the following things
+
+* Sample with clear reproducing steps
+* If possible, provide a screenshot and describe the error in a simple way
+
 We will analyze the bug and if it's a good use-case then this will be added to the main test cases for future regression testing.
 
 ##Special Thanks
