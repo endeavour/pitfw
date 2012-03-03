@@ -33,6 +33,17 @@ open Pit.Compiler
                         Ast.Call(Ast.MemberAccess(x,Variable("t")),args) |> Some
                     | Ast.Call(Ast.MemberAccess(x,Variable("jQuery")),[|Variable(v)|]) ->
                         Ast.Call(Ast.MemberAccess(x,Variable(v)),[|Unit|]) |> Some
+                    /// stripping off op_PipeRight with simple jQuery like function calls
+                    | Ast.Call
+                        (Ast.Call(
+                            Ast.MemberAccess("op_PipeRight",Variable "Pit.FSharp.Core.Operators"),[|call|]),
+                            [|Ast.Closure(
+                                Ast.Function(x, [|Variable "t"|], 
+                                    Ast.Block [|
+                                        Ast.Return(Ast.Call(Ast.MemberAccess(md, Variable "t"), args))
+                                    |]))|]) ->
+                        Ast.Call(MemberAccess(md, call),args) |> Some
+                    /// argument values are mapped from tuples to JS object types
                     | Ast.Call(Variable(x), args) when x.StartsWith("jQuery") ->
                         let idx = x.IndexOf(".") + 1
                         let md  = x.Substring(idx, x.Length - idx)
@@ -42,6 +53,7 @@ open Pit.Compiler
                         Ast.Call(MemberAccess ("ajax",Variable "jQuery"), args|> Array.map mapArrayToObject) |> Some
                     | Ast.StringNode(Some(x)) when x = "this" -> Variable(x) |> Some
                     | x -> None
+                    //|> (fun x -> printfn "%A" x; x)
 
                 /// Transform the AST
                 member x.Transform ast fn =

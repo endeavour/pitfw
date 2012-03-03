@@ -30,6 +30,7 @@ open Pit.Javascript
     module jQuery =
         open Pit.Dom
 
+        [<Pit.Compiler.AstParserExtension(typeof<jQueryParser>)>]
         type t = JQuery
 
         [<Js;CompileTo("$");JsIgnore(IgnoreTypeName=true)>]
