@@ -11,6 +11,12 @@ open Pit
 open Pit.Compiler.Ast
 
 module AstParser =
+    type Context = {
+        extensions : System.Collections.Generic.Dictionary<Type,IAstParserExtension>
+    } with
+        static member Empty = {
+            extensions = System.Collections.Generic.Dictionary<Type,IAstParserExtension>()
+        }
 
     let getOperator methodName (lhs: Node) (rhs: Node) =
         match methodName with
@@ -187,7 +193,7 @@ module AstParser =
                 | x                 -> InstanceOf(l, r) // return back the original object
             | x -> x)
 
-    let getAst(quote:Expr) =
+    let internal getInternalAst (ctx:Context) (quote:Expr) =
         let rec traverse node (map:Map<string, string list>) =
             match node with
 
@@ -400,11 +406,20 @@ module AstParser =
                             Call(node, [|Unit|])
                         elif Microsoft.FSharp.Reflection.FSharpType.IsModule md.DeclaringType then
                             let instrument(node:Node) =
-                                match getAstParserExt(md.DeclaringType) with
-                                | Some(ext) ->
-                                    let tx = ext.GetParserExtension()
-                                    transformAst node tx.Projection tx.Transform
-                                | None -> node
+                                let ext =
+                                    if ctx.extensions.ContainsKey(md.DeclaringType) then ctx.extensions.[md.DeclaringType] |> Some
+                                    /// for pipelined methods return type would be of the same declaring type, ex: jQuery -> jQuery
+                                    elif ctx.extensions.ContainsKey(md.ReturnType) then ctx.extensions.[md.ReturnType] |> Some
+                                    else
+                                        match getAstParserExt(md.DeclaringType) with
+                                        | Some(ext) -> let tx = ext.GetParserExtension() in ctx.extensions.Add(md.DeclaringType,tx);Some(tx)
+                                        | None      -> 
+                                            match getAstParserExt(md.ReturnType) with
+                                            | Some(ext) -> let tx = ext.GetParserExtension() in ctx.extensions.Add(md.ReturnType,tx);Some(tx)
+                                            | None      -> None
+                                match ext with
+                                | Some(tx) -> transformAst node tx.Projection tx.Transform
+                                | None     -> node
                             let callNode =
                                 match md with
                                 | x when not(isIgnoreTupleArgs md) && not(isJsExtensionType md) ->
@@ -744,3 +759,5 @@ module AstParser =
                 Ignore
 
         traverse quote Map.empty
+
+    let getAst (quote:Expr) = getInternalAst Context.Empty quote

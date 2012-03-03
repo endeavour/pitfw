@@ -11,6 +11,7 @@ open Pit
 
 [<AutoOpen>]
 module Utils =
+    type Dictionary<'T,'Key> = System.Collections.Generic.Dictionary<'T,'Key>
 
     let (++) array1 array2  = array1 |> Array.append array2
     let str format          = Printf.kprintf (sprintf "%s") format
@@ -116,7 +117,7 @@ module Utils =
             let attr = md.DeclaringType.GetCustomAttributes(typeof<JsExtensionTypeAttribute>,false)
             if attr.Length > 0 then true else false
 
-    let getAstParserExt(t:Type) =
+    let getAstParserExt (t:Type) =
         let attr = t.GetCustomAttributes(typeof<Pit.Compiler.AstParserExtensionAttribute>,false)
         if attr.Length > 0 then attr.[0] :?> Pit.Compiler.AstParserExtensionAttribute |> Some
         else None
