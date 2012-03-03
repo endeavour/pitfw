@@ -317,7 +317,7 @@ module TypeParser =
                                 //if hasDeclaringType then MemberAccess(m1.Name |> cleanName, MemberAccess(moduleName, Variable(declTy.Name)))
                                 //else MemberAccess(declTy.Name |> cleanName,Variable(moduleName))
                             Assign(MemberAccess(split.[1], mi), func)
-                        | Function(None, args, b) when isDomEntryMethod(m)=true ->
+                        | Closure(Function(None,args,b)) | Function(None, args, b) when isDomEntryMethod(m)=true ->
                             Block([|Call(MemberAccess ("domReady",Variable ("DOM")),[|Function (None, [||], b)|])|])
                         | Function(None, args, b) when m.Name.Contains("|") -> // active pattern support
                             let name = m.Name.Replace("|", "")
