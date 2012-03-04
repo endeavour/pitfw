@@ -4,10 +4,13 @@ open Fake
 
 let release = @".\bin\release"
 let debug   = @".\bin\debug"
-
+let dbgdebug    = debug + @"\silverlight"
+let dbgrelease  = release + @"\silverlight"
+    
 let pitcore     = !! @"src\Pit.sln"
 let pitcompiler = !! @"src\Pit.Compiler.sln"
 let pitdbg      = !! @"src\Pit.dbg.sln"
+let pitbuild    = !! @"build\Pit.Build\Pit.Build.sln"
 
 Target? Clean <-
     fun () ->
@@ -26,14 +29,18 @@ Target? BuildDebug <-
         |> Log "Clean Debug Build:"
         MSBuildDebug debug "Clean" pitcompiler
         |> Log "Clean Debug Build:"
-        MSBuildDebug debug "Clean" pitdbg
+        MSBuildDebug debug "Clean" pitbuild
+        |> Log "Clean Debug Build:"
+        MSBuildDebug dbgdebug "Clean" pitdbg
         |> Log "Clean Debug Build:"
 
         MSBuildDebug debug "Build" pitcore
         |> Log "Debug Build:"
         MSBuildDebug debug "Build" pitcompiler
         |> Log "Debug Build:"
-        MSBuildDebug debug "Build" pitdbg
+        MSBuildDebug debug "Build" pitbuild
+        |> Log "Debug Build:"
+        MSBuildDebug dbgdebug "Build" pitdbg
         |> Log "Debug Build:"
 
 Target? Release <-
@@ -43,14 +50,18 @@ Target? Release <-
         |> Log "Clean Release Build:"
         MSBuildRelease release "Clean" pitcompiler
         |> Log "Clean Release Build:"
-        MSBuildRelease release "Clean" pitdbg
+        MSBuildRelease release "Clean" pitbuild
+        |> Log "Clean Release Build:"
+        MSBuildRelease dbgrelease "Clean" pitdbg
         |> Log "Clean Release Build:"
 
         MSBuildRelease release "Build" pitcore
         |> Log "Release Build:"
         MSBuildRelease release "Build" pitcompiler
         |> Log "Release Build:"
-        MSBuildRelease release "Build" pitdbg
+        MSBuildRelease release "Build" pitbuild
+        |> Log "Release Build:"
+        MSBuildRelease dbgrelease "Build" pitdbg
         |> Log "Release Build:"
 
 Target? Default <-
