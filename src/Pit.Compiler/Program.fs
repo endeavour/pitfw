@@ -44,6 +44,13 @@ pfc.exe test.fsproj /o:output.js /ft:true
             | Some(j, j1) -> Boolean.Parse(j1)
             | _ -> false
 
+
+        let copyResourceArg = parseArg("/cr:")
+        let copyResource =
+            match copyResourceArg with
+            | Some(j, j1) -> Boolean.Parse(j1)
+            | _ -> false
+
         if args.[0].EndsWith("fsproj") then
             let projName = args.[0]
             let projFolderLoc = projName.Substring(0, projName.LastIndexOf("\\"))
@@ -117,7 +124,7 @@ pfc.exe test.fsproj /o:output.js /ft:true
                 |> Array.map(fun f -> if f <> "" then f.Substring(3,f.Length-3) else "")
                 |> Array.filter(fun f -> f.EndsWith(".dll"))
             let dllPath = args.[0]
-            PitCodeCompiler.CompileDll dllPath opfile references formatJs printAst
+            PitCodeCompiler.CompileDll dllPath opfile references formatJs printAst copyResource
 
     //Console.ReadKey(true) |> ignore
     0

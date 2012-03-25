@@ -71,8 +71,39 @@ module PitCodeCompiler =
         else
             eprintfn "%A" er
 
-    let CompileDll (dllPath:String) (outputfile : string) (references:string[]) (formatJs : bool) (printAst : bool) =
-        references |> Array.iter(fun r -> Assembly.LoadFrom(r) |> ignore)
+    let getExtResourceAttr (t:Assembly) =
+        let attr = t.GetCustomAttributes(typeof<PitExternalResourceAttribute>, false)
+        if attr.Length > 0 then Some(attr.[0] :?> PitExternalResourceAttribute) else None
+
+    let getFileString (fileName:string) (asm:Assembly) =
+        using(asm.GetManifestResourceStream(fileName))(fun ms ->
+            use stream = new System.IO.StreamReader(ms)
+            stream.ReadToEnd())
+
+    let writeToLocation  (outputfile : string) (name:string) (text:string) =
+        let extPath = Path.Combine(Path.GetDirectoryName(outputfile), name)
+        if  not(File.Exists(extPath)) then
+            use fs = File.Create(extPath)
+            use sw = new StreamWriter(fs)
+            sw.Write(text)
+
+
+    let copyResourceFile (outputfile : string) (copyResource:bool) (asm:Assembly) =
+        if  copyResource then
+            match getExtResourceAttr asm with
+            | Some(attr) ->
+                getFileString attr.Name asm
+                |> writeToLocation outputfile attr.Name
+            | None -> ()
+
+    let CompileDll (dllPath:String) (outputfile : string) (references:string[]) (formatJs : bool) (printAst : bool) (copyResource:bool) =
+
+        references
+        |> Array.iter(fun r ->
+                        Assembly.LoadFrom(r)
+                        |> copyResourceFile outputfile copyResource
+                        )
+
         AppDomain.CurrentDomain.add_AssemblyResolve(new ResolveEventHandler(fun s e ->
             let assemblies = AppDomain.CurrentDomain.GetAssemblies()
             match  assemblies |> Array.tryFind(fun f -> f.FullName = e.Name) with
@@ -88,7 +119,21 @@ module PitCodeCompiler =
                 | Some(file) -> Assembly.LoadFrom(file)
                 | None       -> null
         ))
+
         let asm = Assembly.LoadFrom(dllPath)
+
+        let pitLocation = Path.Combine(Environment.GetEnvironmentVariable("PitLocation", EnvironmentVariableTarget.User) , "bin")
+
+        if references.Count() = 0 then
+            let refs = asm.GetReferencedAssemblies()
+            refs
+            |> Array.filter(fun r -> r.Name.Contains("Pit"))
+            |> Array.map(fun m -> Path.Combine(pitLocation, m.Name))
+            |> Array.iter( fun a ->
+                Assembly.LoadFrom(a + ".dll")
+                |> copyResourceFile outputfile copyResource
+                )
+
         if asm.GetCustomAttributes(typeof<PitAssemblyAttribute>, true).Length = 1 then
             let types = asm.GetExportedTypes()
             let ast = TypeParser.getAst types

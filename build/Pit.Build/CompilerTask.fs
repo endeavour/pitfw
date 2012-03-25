@@ -41,10 +41,8 @@ module Helper =
     let getFileString fileName =
         let execAssembly = System.Reflection.Assembly.GetExecutingAssembly()
         using(execAssembly.GetManifestResourceStream(fileName))(fun ms ->
-            let stream = new System.IO.StreamReader(ms)
-            let text = stream.ReadToEnd()
-            stream.Close()
-            text
+            use stream = new System.IO.StreamReader(ms)
+            stream.ReadToEnd()
         )
 
     let getXDoc fileName =

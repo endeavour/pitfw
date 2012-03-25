@@ -22,6 +22,7 @@ type LibCompilerTask() =
     let mutable solution = String.Empty
     let mutable slGuid = String.Empty
     let mutable format = "true"
+    let mutable copyExternalResource = "false"
 
     member x.OutputPath
         with get() = outputPath
@@ -43,11 +44,16 @@ type LibCompilerTask() =
         and set(v) =
             format <- v
 
+    member x.CopyExternalResource
+        with get() = copyExternalResource
+        and  set(v) =
+            copyExternalResource <- v
+
     override this.Execute() =
         try
             let jsPath = this.OutputPath.Replace(".dll", ".js")
             let processInfo = create()
-            processInfo.Arguments <- "\"" + this.OutputPath + "\"" + " /o:" + "\"" + (jsPath) + "\"" + " /ft:" + this.Format
+            processInfo.Arguments <- "\"" + this.OutputPath + "\"" + " /o:" + "\"" + (jsPath) + "\"" + " /ft:" + this.Format  + " /cr:" + this.CopyExternalResource
             let pfbuild = Process.Start(processInfo)
             pfbuild.WaitForExit()
             let stdout = pfbuild.StandardOutput.ReadToEnd()
