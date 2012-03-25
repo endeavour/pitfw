@@ -10,7 +10,7 @@ open Pit.Javascript
             array.Push(s)
 
         [<Js>]
-        override this.ToString() =
+        member this.toString() =
             array.JoinAll("")
 
 namespace Pit.FSharp.Core
