@@ -82,6 +82,10 @@ module Utils =
         let attr = t.GetCustomAttributes(typeof<JsIgnoreAttribute>, false)
         if attr.Length > 0 then Some(attr.[0] :?> JsIgnoreAttribute) else None
 
+    let getIgnoreNamespaceAttr (t:MemberInfo) =
+        let attr = t.GetCustomAttributes(typeof<IgnoreNamespaceAttribute>,false)
+        if attr.Length > 0 then true else false
+
     let isIgnoreTupleArgs (md:MemberInfo) =
         match getJsIgnoreAttr(md) with
         | Some(js) -> js.IgnoreTuple
@@ -107,8 +111,8 @@ module Utils =
 
     let getCompilationArgumentsAttr (md:MethodInfo) =
         let attr = md.GetCustomAttributes(typeof<CompilationArgumentCountsAttribute>,false)
-        if attr.Length > 0 then true
-        else false
+        if attr.Length > 0 then Some(attr.[0] :?> CompilationArgumentCountsAttribute)
+        else None
 
     let isJsExtensionType (md:MethodInfo) =
         let attr = md.GetCustomAttributes(typeof<JsExtensionTypeAttribute>,false)
@@ -149,6 +153,7 @@ module Utils =
         match getJsIgnoreAttr t with
         | Some(j) when j.IgnoreNamespace = true -> t.Name
         | Some(j) when j.IgnoreTypeName  = true -> ""
+        | None when getIgnoreNamespaceAttr(t) = true -> t.Name
         | _ ->
             match t.Namespace with
             | null -> parseName t name
@@ -162,10 +167,13 @@ module Utils =
             match getJsIgnoreAttr t with
             | Some(j) when j.IgnoreNamespace = true && not(j.IgnoreTypeName) -> a.Name
             | _ ->
-                if t.FullName <> null then
-                    parseFullName t name
-                else
-                    if String.IsNullOrEmpty(name) then str "%s.%s" t.Namespace a.Name else str "%s.%s.%s" t.Namespace a.Name name
+                match getIgnoreNamespaceAttr t with
+                | true -> a.Name
+                | _ ->
+                    if t.FullName <> null then
+                        parseFullName t name
+                    else
+                        if String.IsNullOrEmpty(name) then str "%s.%s" t.Namespace a.Name else str "%s.%s.%s" t.Namespace a.Name name
         else
             parseFullName t name |> cleanName
 

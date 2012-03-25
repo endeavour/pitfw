@@ -11,7 +11,7 @@ open Pit.Javascript
         async       : bool
         contentType : string
         data        : 'a
-        dataType : string
+        dataType    : string
         ``global``  : bool
         ifModified  : bool
         processData : bool
@@ -25,7 +25,7 @@ open Pit.Javascript
         value   : string
     }
 
-    /// Doc Topic - Events
+    /// Doc Topic - TODO jQuery object accessors
     [<Pit.Compiler.AstParserExtension(typeof<jQueryParser>);JsIgnore(IgnoreNamespace=true)>]
     module jQuery =
         open Pit.Dom
@@ -61,7 +61,7 @@ open Pit.Javascript
         /// <returns>JQuery</returns>
         [<Js>]
         let attr (x) (t:t) =
-            t
+            ""
 
         /// <summary>
         /// Overload for <see cref="jQuery.attr"/>
@@ -1149,8 +1149,8 @@ open Pit.Javascript
         /// </param>
         /// <param name="t">JQuery</param>
         /// <returns>JQuery</returns>
-        [<Js>]
-        let hover (x:event->unit * (event->unit)) (t:t) =
+        [<Js;JsIgnore(IgnoreTuple=true)>]
+        let hover (x: (event->unit) * (event->unit))  (t:t) =
             t
 
         /// <summary>
@@ -1160,7 +1160,7 @@ open Pit.Javascript
         /// <param name="x">Two functors</param>
         /// <param name="t">JQuery</param>
         /// <returns>JQuery</returns>
-        [<Js;>]
+        [<Js;JsIgnore(IgnoreTuple=true)>]
         let toggleEvent (x: (event->unit) * (event->unit)) (t:t) =
             t
 

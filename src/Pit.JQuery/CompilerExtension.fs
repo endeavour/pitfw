@@ -29,26 +29,32 @@ open Pit.Compiler
                 member x.Projection ast fn =
                     //printfn "%A" ast
                     match ast with
+                    /// removing jQuery function call to t.SomeFunction
                     | Ast.Call(Ast.Call(Ast.MemberAccess(x,Variable("jQuery")),args), [|Variable("t")|]) ->
                         Ast.Call(Ast.MemberAccess(x,Variable("t")),args) |> Some
-                    | Ast.Call(Ast.MemberAccess(x,Variable("jQuery")),[|Variable(v)|]) ->
-                        Ast.Call(Ast.MemberAccess(x,Variable(v)),[|Unit|]) |> Some
+                    /// for functions which accept more than 2 params
+                    | Ast.Call(Ast.MemberAccess(x,Variable("jQuery")),args) when args.Length > 1 ->
+                        let args1 = args |> Array.take(args.Length-1)
+                        Ast.Call(Ast.MemberAccess(x,args.[args.Length-1]),args1) |> Some
                     /// stripping off op_PipeRight with simple jQuery like function calls
                     | Ast.Call
                         (Ast.Call(
                             Ast.MemberAccess("op_PipeRight",Variable "Pit.FSharp.Core.Operators"),[|call|]),
                             [|Ast.Closure(
-                                Ast.Function(x, [|Variable "t"|], 
+                                Ast.Function(x, [|Variable _|], 
                                     Ast.Block [|
-                                        Ast.Return(Ast.Call(Ast.MemberAccess(md, Variable "t"), args))
+                                        Ast.Return(Ast.Call(Ast.MemberAccess(md, Variable _), args))
                                     |]))|]) ->
                         Ast.Call(MemberAccess(md, call),args) |> Some
                     /// argument values are mapped from tuples to JS object types
+                    /// last arg "t" is stripped out from the args
                     | Ast.Call(Variable(x), args) when x.StartsWith("jQuery") ->
                         let idx = x.IndexOf(".") + 1
                         let md  = x.Substring(idx, x.Length - idx)
                         let args1 = args |> Array.take(args.Length-1) |> Array.map mapArrayToObject
                         Ast.Call(MemberAccess(md,args.[args.Length-1]),args1) |> Some
+                    | Ast.Call(Ast.Call(Ast.MemberAccess(x,Variable("jQuery")),args), [|Variable t|]) ->
+                        Ast.Call(Ast.MemberAccess(x,Variable t),args) |> Some
                     | Ast.Call(MemberAccess ("ajax",Variable "jQuery"),[|Ast.NewTupleNode(args)|]) ->
                         Ast.Call(MemberAccess ("ajax",Variable "jQuery"), args|> Array.map mapArrayToObject) |> Some
                     | Ast.StringNode(Some(x)) when x = "this" -> Variable(x) |> Some

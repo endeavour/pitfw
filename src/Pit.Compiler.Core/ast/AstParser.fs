@@ -71,6 +71,20 @@ module AstParser =
         else
             Expr.Var(Var(v.Name + "." + "get_" + p.Name, p.PropertyType, p.CanWrite))
 
+    let getCompilationCall node (arguments:Node array) (counts:int list) =
+        /// grouping compilation args based on the keys
+        let rec group args acc counts =
+            match counts with
+            | [] -> acc
+            | h :: t ->
+                let items = args |> Array.take(h)
+                group (args |> Array.skip(h)) (acc @ [items]) t
+        let grp = group arguments [] counts
+        let temp = ref node
+        for a in grp do
+            temp := Call(temp.Value, a)
+        temp.Value
+
     let getArgs args' =
         let rec loop arg lets =
             match arg with
@@ -303,7 +317,8 @@ module AstParser =
                     match md.Name with
                     | var when var.StartsWith("op_") ->
                         if var = "op_Equality" && (isUnionOrRecordType args1)  then
-                            Some(Call(MemberAccess("equality", (traverse args1.[0] map)), [|(traverse args1.[1] map)|]))
+                            //Some(Call(MemberAccess("equality", (traverse args1.[0] map)), [|(traverse args1.[1] map)|]))
+                            Some(Call(MemberAccess("equality",Variable "Pit.JsCommon"), [|(traverse args1.[0] map);(traverse args1.[1] map)|]))
                         else
                             match isOpOverload md with
                             | false ->
@@ -331,6 +346,8 @@ module AstParser =
                     | "Not" -> (traverse args1.[0] map) |> Not |> Some
                     | "Invoke" when isOfType(md.DeclaringType, typeof<Delegate>) ->
                         Call(traverse (expr1|>Option.get) map, args1 |> Array.map(fun a -> traverse a map)) |> Some
+                    | "ToString" ->
+                        Call(MemberAccess("toString", traverse (expr1|>Option.get) map), [|Unit|]) |> Some
                     | x when isIgnoreCall(md) ->
                         Return(Block(args1 |> Array.map(fun a -> traverse a map))) |> Some
                     | _ -> None
@@ -373,7 +390,6 @@ module AstParser =
                                             | _                   -> pos*)
                                         | _ -> pos
                                     //if not(isIgnoreTupleArgs(md))
-                                    let p = (getTuplePositions x position)
                                     let lastTuplePosition = let p = (getTuplePositions x position) in if p = position then args2.Length else p
                                     let arguments = [|for pos in { position .. (lastTuplePosition) - 1 } -> traverse args2.[pos] map|]
                                     let tuple = createTuple arguments
@@ -434,14 +450,18 @@ module AstParser =
                                     let arguments = arguments |> Array.skip(1)
                                     Call(MemberAccessNode(node,extType), arguments)
                                 | _ -> Call(node, arguments)
+                                    (*match getCompilationArgumentsAttr(md) with
+                                    | Some(attr) when isIgnoreTupleArgs(md) -> getCompilationCall node arguments (attr.Counts |> Seq.toList)
+                                    | _ -> Call(node, arguments)*)
                             callNode |> instrument
                         else
-                            if getCompilationArgumentsAttr(md) then
+                            match getCompilationArgumentsAttr(md) with
+                            | Some(attr) ->
                                 let temp = ref node
                                 for a in arguments do
                                     temp := Call(temp.Value, [|a|])
                                 temp.Value
-                            else Call(node, arguments)
+                            | _ -> Call(node, arguments)
 
                     match expr1 with
                     | Some expr ->
@@ -472,7 +492,9 @@ module AstParser =
                 Call(traverse l map, [|traverse r map|])
 
             | Patterns.Sequential(l,r) ->
-                Block([|traverse l map;traverse r map|])
+                match l with
+                | Patterns.Value(x,y) when x = null -> traverse r map
+                | _ -> Block([|traverse l map;traverse r map|])
 
             | Patterns.TupleGet(n,index) ->
                 MemberAccess("Item" + (index + 1).ToString(), traverse n map)
@@ -642,7 +664,7 @@ module AstParser =
                 // setters with let, mostly mutable setters require a wrapper function to create the method
                 let value =
                     match c with
-                    | Patterns.Let(_,_,_) ->
+                    | Patterns.Let(v,_,_) ->
                         let e = Expr.Lambda(Var("unitVar0", typeof<unit>), c)
                         let call = traverse e map
                         Call(call, [||])
@@ -750,7 +772,8 @@ module AstParser =
                         InstanceOf(left, Variable(getDeclaredTypeName(t, String.Empty)))
                     else
                         let intVar = QuotedVariable(("__get" + t.Name) |> cleanName)
-                        Call(MemberAccess("containsInterface", left), [| intVar |])
+                        //Call(MemberAccess("containsInterface", left), [| intVar |])
+                        Call(MemberAccess("containsInterface", Variable "Pit.JsCommon"), [| left;intVar |])
                         (*let intTy = MemberAccessNode(Call(Variable(("__get" + t.Name) |> cleanName), [|Unit|]), left)
                         Call(MemberAccess("isInterfaceOf", intTy), [| New(Variable(getDeclaredTypeName(t, String.Empty)|> cleanName), [||]) |])*)
 

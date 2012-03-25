@@ -6,6 +6,13 @@ open System
 type PitAssemblyAttribute() =
     inherit Attribute()
 
+[<AttributeUsage(AttributeTargets.Assembly)>]
+type PitExternalResourceAttribute(name) =
+    inherit Attribute()
+
+    member this.Name:string = name
+
+
 [<AttributeUsage(AttributeTargets.Class)>]
 type AliasAttribute(name) =
     inherit Attribute()
@@ -50,6 +57,9 @@ type JsIgnoreAttribute() =
         with get() = ignoreGetSet
         and set(v) = ignoreGetSet <- v
 
+    /// Ignores tuple generation with Item1,Item2 in member functions and generates as a
+    /// normal JS function as function(item1,item2){}. It ignore all the arguments and simply
+    /// combines them as a single function
     member x.IgnoreTuple
         with get() = ignoreTuple
         and set(v) = ignoreTuple <- v
@@ -85,3 +95,7 @@ type JsExtensionTypeAttribute() =
     inherit Attribute()
 
 type JsOverloadMember = CompileToAttribute
+
+[<AttributeUsage(AttributeTargets.Class ||| AttributeTargets.Module)>]
+type IgnoreNamespaceAttribute() =
+    inherit Attribute()
