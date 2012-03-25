@@ -1,5 +1,6 @@
 ﻿namespace Pit.Test
 open Pit
+open Pit.Javascript.JQuery
 
 module UnionTests =
 
@@ -16,22 +17,27 @@ module UnionTests =
     [<Js>]
     let UnionDeclare() =
         let pi = 3.141592654
-
         let area myShape =
             match myShape with
             | Circle radius -> pi * radius * radius
             | EquilateralTriangle s -> (sqrt 3.0) / 4.0 * s * s
             | Square s -> s * s
-            | Rectangle (h, w) -> h * w
+            | Rectangle (h, w) -> h * w        
+        QUnit.test "Union Declare" (fun () ->
+            let radius = 15.0
+            let myCircle = Circle(radius)
+            QUnit.equal (area myCircle |> int) 706 "Union Declare"
 
-        let radius = 15.0
-        let myCircle = Circle(radius)
-        Assert.AreEqual "Union Declare" (area myCircle |> int) 706
+            let squareSide = 10.0
+            let mySquare = Square(squareSide)
+            QUnit.equal (area mySquare) 100.000000 "Union Declare"
 
-        let squareSide = 10.0
-        let mySquare = Square(squareSide)
-        Assert.AreEqual "Union Declare" (area mySquare) 100.000000
+            let height, width = 5.0, 10.0
+            let myRectangle = Rectangle(height, width)
+            QUnit.equal (area myRectangle) 50.000000 "Union Declare"
+        )
 
-        let height, width = 5.0, 10.0
-        let myRectangle = Rectangle(height, width)
-        Assert.AreEqual "Union Declare" (area myRectangle) 50.000000
+    [<Js>]
+    let run () =
+        QUnit.moduleDeclare "Union cases"
+        UnionDeclare()

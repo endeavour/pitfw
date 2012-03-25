@@ -1,6 +1,7 @@
 ﻿namespace Pit.Test
 open Pit
 open Pit.Javascript
+open Pit.Javascript.JQuery
 
 module UOMTest =
     [<Measure>] type C
@@ -13,8 +14,10 @@ module UOMTest =
 
     [<Js>]
     let UOMeasure1() =
-        let f = to_farenheit 20.<C>
-        Assert.AreEqual "Units Of Measure To Farenheit" 68 f
+        QUnit.test "UOM 1" (fun () ->
+            let f = to_farenheit 20.<C>
+            QUnit.equal 68 f "Units Of Measure To Farenheit"
+        )
 
     [<Measure>] type m
     [<Measure>] type kg
@@ -35,8 +38,16 @@ module UOMTest =
 
     [<Js>]
     let UOMeasure2() =
-        let f, l, m, d = average vanillaFloats, average lengths, average masses, average densities
-        Assert.AreEqual "UOM Floats" (f |> Global.parseInt) 14
-        Assert.AreEqual "UOM Lengths" l 7
-        Assert.AreEqual "UOM Masses" (m |> Global.parseInt) 156
-        Assert.AreEqual "UOM Densities" d 0.718
+        QUnit.test "UOM 2" (fun () ->
+            let f, l, m, d = average vanillaFloats, average lengths, average masses, average densities
+            QUnit.equal (f |> Global.parseInt) 14 "UOM Floats"
+            QUnit.equal l 7 "UOM Lengths"
+            QUnit.equal (m |> Global.parseInt) 156 "UOM Masses"
+            QUnit.equal d 0.718 "UOM Densities"
+        )
+
+    [<Js>]
+    let run() =
+        QUnit.moduleDeclare("Units of Measure")
+        UOMeasure1()
+        UOMeasure2()

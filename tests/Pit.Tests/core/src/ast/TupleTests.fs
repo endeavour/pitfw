@@ -1,72 +1,88 @@
 ﻿namespace Pit.Test
 open Pit
+open Pit.Javascript.JQuery
 
 module TupleTests =
 
     [<Js>]
-    let TupleDecalre() =
-        let a,b,c = (1,2,3)
-        Assert.AreEqual "Tuple Decalre" a 1
-
+    let TupleDeclare() =
+        QUnit.test "Tuple Declare" (fun () ->
+            let a,b,c = (1,2,3)
+            QUnit.equal a 1 "Tuple Decalre"
+        )
 
     [<Js>]
     let TupleFst() =
-        let r = fst (1,2)
-        Assert.AreEqual "Tuple First(fst)" r 1
+        QUnit.test "Tuple Fst" (fun () ->
+            let r = fst (1,2)
+            QUnit.equal r 1 "Tuple First(fst)"
+        )
 
     [<Js>]
     let TupleSnd() =
-        let r = snd (1,2)
-        Assert.AreEqual "Tuple Second(fst)" r 2
+        QUnit.test "Tuple Snd" (fun () ->
+            let r = snd (1,2)
+            QUnit.equal r 2 "Tuple Second(fst)"
+        )
 
     [<Js>]
     let MixedTuple() =
-        let mixedTuple = ( 1, "two", 3.3 )
-        let _,r,_ = mixedTuple
-        Assert.AreEqual "Mixed Tuple" r "two"
+        QUnit.test "Mixed Tuple" (fun () ->
+            let mixedTuple = ( 1, "two", 3.3 )
+            let _,r,_ = mixedTuple
+            QUnit.equal r "two" "Mixed Tuple"
+        )
 
     [<Js>]
     let TupleFunctions() =
-        let avg (a,b) = (a + b)/2.0
-        let r = avg(5.0, 5.0)
-        Assert.AreEqual "Functions with Tuple arguements" r 5.0
+        QUnit.test "Tuple Functions" (fun () ->
+            let avg (a,b) = (a + b)/2.0
+            let r = avg(5.0, 5.0)
+            QUnit.equal r 5.0 "Functions with Tuple arguements"
+        )
 
     [<Js>]
     let TupleFunctions2() =
-        let scalarMultiply (s : float) (a, b) = (a * s, b * s)
-        let r = fst (scalarMultiply(5.0) (1.0,2.0))
-        Assert.AreEqual "Functions with Tuple arguements 2" r 5.0
+        QUnit.test "Tuple Functions2" (fun () ->
+            let scalarMultiply (s : float) (a, b) = (a * s, b * s)
+            let r = fst (scalarMultiply(5.0) (1.0,2.0))
+            QUnit.equal r 5.0 "Functions with Tuple arguements 2"
+        )
 
     [<Js>]
     let t1 x = x, (fun x -> x + 1)
 
     [<Js>]
     let TupleFunctions3() =
-        let r = ((snd (t1 3)) 3)
-        Assert.AreEqual "Tuple with Functions arguements 2" r 4
+        QUnit.test "Tuple Functions3" (fun () ->
+            let r = ((snd (t1 3)) 3)
+            QUnit.equal r 4 "Tuple with Functions arguements 2"
+        )
 
 
     [<Js>]
     let TupleArrays() =
-        let a =  ([|1;2;3|], [|4;5;6|])
-        Assert.AreEqual "Tuple of Arrays" ((fst a).[0]) 1
-
+        QUnit.test "Tuple Arrays" (fun () ->
+            let a =  ([|1;2;3|], [|4;5;6|])
+            QUnit.equal ((fst a).[0]) 1 "Tuple of Arrays"
+        )
 
     type tRec = {
-                p1 : int
-                p2 : int
-             }
+        p1 : int
+        p2 : int
+        }
 
     [<Js>]
     let TupleRecords() =
-        let j = { p1 = 5 ; p2 = 5 }
-        let k = { p1 = 5 ; p2 = 5 }
-        let tupRec (a:tRec, b:tRec) = a.p1 + a.p2 + b.p1 + b.p2
-        let r = tupRec (j,k)
-        Assert.AreEqual "Tuple with records" r 20
+        QUnit.test "Tuple with Records" (fun () ->
+            let j = { p1 = 5 ; p2 = 5 }
+            let k = { p1 = 5 ; p2 = 5 }
+            let tupRec (a:tRec, b:tRec) = a.p1 + a.p2 + b.p1 + b.p2
+            let r = tupRec (j,k)
+            QUnit.equal r 20 "Tuple with records"
+        )
 
     type TupleIgnore() =
-
         [<Js>]
         [<JsIgnore(IgnoreTuple=true)>]
         member this.CallTuple2(s1:int, s2: int) =
@@ -74,6 +90,21 @@ module TupleTests =
 
     [<Js>]
     let TupleCallAsNormalFunction() =
-        let a = new TupleIgnore()
-        let s = a.CallTuple2(1,1)
-        Assert.AreEqual "Tuple Call as Normal Function IgnoreTuple=true" 2 s
+        QUnit.test "Tuple call as normal function" (fun () ->
+            let a = new TupleIgnore()
+            let s = a.CallTuple2(1,1)
+            QUnit.equal 2 s "Tuple Call as Normal Function IgnoreTuple=true"
+        )
+
+    [<Js>]
+    let run() =
+        TupleDeclare()
+        TupleFst()
+        TupleSnd()
+        MixedTuple()
+        TupleFunctions()
+        TupleFunctions2()
+        TupleFunctions3()
+        TupleArrays()
+        TupleRecords()        
+        TupleCallAsNormalFunction()

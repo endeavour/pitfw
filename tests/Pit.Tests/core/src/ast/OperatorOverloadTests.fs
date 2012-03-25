@@ -1,5 +1,6 @@
 ﻿namespace Pit.Test
 open Pit
+open Pit.Javascript.JQuery
 
     module OperatorOverloadTests =
 
@@ -26,9 +27,11 @@ open Pit
             let t3 = t1 + t2
             let t4 = t1 - t2
             let t5 = t1 * 10
-            Assert.AreEqual "Op Overload 1" t3.x 30
-            Assert.AreEqual "Op Overload 2" t4.x -10
-            Assert.AreEqual "Op Overload 3" t5.x 100
+            QUnit.test "Op overload1" (fun () ->
+                QUnit.equal t3.x 30 "Op Overload 1"
+                QUnit.equal t4.x -10 "Op Overload 2"
+                QUnit.equal t5.x 100 "Op Overload 3"
+            )
 
         type Expression =
         | Add of Expression * Expression
@@ -39,11 +42,19 @@ open Pit
 
         [<Js>]
         let OpOverload2() =
-            let a = Constant(10)
-            let b = Constant(20)
-            let c = a + b
-            let res =
-                match c with
-                | Add(_,_) -> true
-                | _        -> false
-            Assert.AreEqual "Union case overload" true res
+            QUnit.test "OpOverload2" (fun () ->
+                let a = Constant(10)
+                let b = Constant(20)
+                let c = a + b
+                let res =
+                    match c with
+                    | Add(_,_) -> true
+                    | _        -> false
+                QUnit.equal true res "Union case overload"
+            )
+
+        [<Js>]
+        let run() =
+            QUnit.moduleDeclare("Operator Overload")
+            OpOverload1()
+            OpOverload2()

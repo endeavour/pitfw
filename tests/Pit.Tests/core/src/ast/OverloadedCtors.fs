@@ -1,5 +1,6 @@
 ﻿namespace Pit.Test
 open Pit
+open Pit.Javascript.JQuery
 
     module OverloadedCtorsTests =
 
@@ -13,13 +14,15 @@ open Pit
 
         [<Js>]
         let TestRecordLikeCtor() =
-            let v = new t()
-            Assert.AreEqual "Record Like Ctor Exp1" v.x 0
-            let v1 = new t(10)
-            Assert.AreEqual "Record Like Ctor Exp2" v1.x 10
-            let v2 = new t(20, "Hello World")
-            Assert.AreEqual "Record Like Ctor Exp3" v2.x 20
-            Assert.AreEqual "Record Like Ctor Exp3" v2.msg "Hello World"
+            QUnit.test "Record like ctor" (fun () ->
+                let v = new t()
+                QUnit.equal v.x 0 "Record Like Ctor Exp1"
+                let v1 = new t(10)
+                QUnit.equal v1.x 10 "Record Like Ctor Exp2"
+                let v2 = new t(20, "Hello World")
+                QUnit.equal v2.x 20 "Record Like Ctor Exp3"
+                QUnit.equal v2.msg "Hello World" "Record Like Ctor Exp3"
+            )
 
         type t1 [<Js>](x, msg) =
             let xval    = x
@@ -32,8 +35,16 @@ open Pit
 
         [<Js>]
         let TestNormalTypes() =
-            let v  = new t1(10, "Hello World")
-            Assert.AreEqual "Normal Type Ctor Exp1" v.XVal 10
-            Assert.AreEqual "Normal Type Ctor Exp1" v.MsgVal "Hello World"
-            let v1 = new t1()
-            Assert.AreEqual "Normal Type Ctor Exp2" v1.XVal 0
+            QUnit.test "Normal type ctor" (fun () ->
+                let v  = new t1(10, "Hello World")
+                QUnit.equal v.XVal 10 "Normal Type Ctor Exp1"
+                QUnit.equal v.MsgVal "Hello World" "Normal Type Ctor Exp1"
+                let v1 = new t1()
+                QUnit.equal v1.XVal 0 "Normal Type Ctor Exp2"
+            )
+
+        [<Js>]
+        let run() =
+            QUnit.moduleDeclare("Overloaded ctors")
+            TestRecordLikeCtor()
+            TestNormalTypes()

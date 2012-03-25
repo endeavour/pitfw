@@ -1,5 +1,6 @@
 ﻿namespace Pit.Test
 open Pit
+open Pit.Javascript.JQuery
 
 module DelegateTests =
 
@@ -7,13 +8,16 @@ module DelegateTests =
     type Delegate2 = delegate of int * int -> int
 
     [<Js>]
-    let Declare1() =
-        let f1 = new Delegate1(fun (a,b) -> a + b)
-        let r = f1.Invoke((1,2))
-        Assert.AreEqual "Delegate Declare1 Test" r 3
+    let run() =
+        QUnit.moduleDeclare("Delegate Tests")
+        QUnit.test "Declare1" (fun () ->
+            let f1 = new Delegate1(fun (a,b) -> a + b)
+            let r = f1.Invoke((1,2))
+            QUnit.equal r 3 "Delegate Declare1 Test" 
+        )
 
-    [<Js>]
-    let Declare2() =
-        let f1 = new Delegate2(fun a b -> a + b)
-        let r = f1.Invoke(1,2)
-        Assert.AreEqual "Delegate Declare2 Test" r 3
+        QUnit.test "Declare2" (fun () ->
+            let f1 = new Delegate2(fun a b -> a + b)
+            let r = f1.Invoke(1,2)
+            QUnit.equal r 3 "Delegate Declare2 Test"
+        )

@@ -1,6 +1,7 @@
 ﻿namespace Pit.Test
 open Pit
 open Pit.Javascript
+open Pit.Javascript.JQuery
 
 module ActivePatternsTest =
 
@@ -15,8 +16,10 @@ module ActivePatternsTest =
 
     [<Js>]
     let ActivePatterns() =
-        let res = isEven 2
-        Assert.AreEqual "Active Pattern" true res
+        QUnit.test "active patterns" (fun () ->
+            let res = isEven 2
+            QUnit.equal true res "Active Pattern"
+        )
 
     [<Js>]
     let err = 1.e-10
@@ -45,8 +48,15 @@ module ActivePatternsTest =
            | Square x -> true
            | _ -> false
           )
-       then Assert.AreEqual "Partial Active Patterns" 64 x
+       then QUnit.equal 64 x "Partial Active Patterns"
 
     [<Js>]
     let PartialActivePatterns() =
-        findSquareCubes 64
+        QUnit.test "partial active patterns" (fun () ->
+            findSquareCubes 64
+        )
+
+    [<Js>]
+    let run() =
+        ActivePatterns()
+        PartialActivePatterns()

@@ -1,434 +1,631 @@
 ﻿namespace Pit.Test
 open Pit
 open Pit.Javascript
+open Pit.Javascript.JQuery
 
 module ArrayTest =
 
     [<Js>]
     let Declare() =
-        let arr1 = [|1;2;3|]
-        Assert.AreEqual "Declare Array" arr1.[0] 1
+        QUnit.test "declare" (fun () ->
+            let arr1 = [|1;2;3|]
+            QUnit.equal arr1.[0] 1 "Declare Array"
+        )
 
     [<Js>]
     let Length() =
-        let array = [|1;2;3;4;5|]
-        let len = Array.length array
-        Assert.AreEqual "Array Length" len 5
+        QUnit.test "length" (fun () ->
+            let array = [|1;2;3;4;5|]
+            let len = Array.length array
+            QUnit.equal len 5 "Array Length"
+        )
 
     [<Js>]
     let DeclareRange() =
-        let array = [| for i in 1 .. 10 -> i * i |]
-        Assert.AreEqual "Declare Array Range" array.[4] 25
+        QUnit.test "declare range" (fun () ->
+            let array = [| for i in 1 .. 10 -> i * i |]
+            QUnit.equal array.[4] 25 "Declare Array Range"
+        )
 
     [<Js>]
     let ZeroCreate() =
-        let array : int array = Array.zeroCreate 10
-        Assert.AreEqual "Array Zero Create" array.[0] 0
+        QUnit.test "zero create" (fun () ->
+            let array : int array = Array.zeroCreate 10
+            QUnit.equal array.[0] 0 "Array Zero Create"
+        )
 
     [<Js>]
     let CreateGetSet() =
-        let array1 = Array.create 5 ""
-        for i in 0 .. array1.Length - 1 do
-            Array.set array1 i (i.ToString())
-        Assert.AreEqual "Array Create/Get/Set" array1.[0] (Array.get array1 0)
+        QUnit.test "create get set" (fun () ->
+            let array1 = Array.create 5 ""
+            for i in 0 .. array1.Length - 1 do
+                Array.set array1 i (i.ToString())
+            QUnit.equal array1.[0] (Array.get array1 0) "Array Create/Get/Set"
+        )
 
     [<Js>]
     let Init() =
-        let array = (Array.init 5 (fun index -> index * index))
-        Assert.AreEqual "Array Init" array.[4] 16
+        QUnit.test "init" (fun () ->
+            let array = (Array.init 5 (fun index -> index * index))
+            QUnit.equal array.[4] 16 "Array Init"
+        )
 
     [<Js>]
     let Copy() =
-        let array1 = Array.init 5 (fun index -> index * index)
-        let array2 = Array.copy array1
-        Assert.AreEqual "Array Copy" array1.[0] array2.[0]
+        QUnit.test "copy" (fun ()->
+            let array1 = Array.init 5 (fun index -> index * index)
+            let array2 = Array.copy array1
+            QUnit.equal array1.[0] array2.[0]  "Array Copy"
+        )
 
     [<Js>]
     let Sub() =
-        let a1 = [|1..10|]
-        let a2 = Array.sub a1 2 6
-        Assert.AreEqual "Array Sub" 6 a2.Length
+        QUnit.test "sub" (fun () ->
+            let a1 = [|1..10|]
+            let a2 = Array.sub a1 2 6
+            QUnit.equal 6 a2.Length "Array Sub"
+        )
 
     [<Js>]
     let Append() =
-        let m = Array.append [| 1; 2; 3|] [| 4; 5; 6|]
-        Assert.AreEqual "Array append" 6 m.Length
+        QUnit.test "append" (fun () ->
+            let m = Array.append [| 1; 2; 3|] [| 4; 5; 6|]
+            QUnit.equal 6 m.Length "Array append"
+        )
 
     [<Js>]
     let Choose() =
-        let k =
-            Array.choose (fun elem ->
-                if elem % 2 = 0 then
-                    Some(float (elem*elem - 1))
-                else
-                    None) [| 1 .. 10 |]
-        Assert.AreEqual "Array Choose" k.[0] 3.0
+        QUnit.test "choose" (fun () ->
+            let k =
+                Array.choose (fun elem ->
+                    if elem % 2 = 0 then
+                        Some(float (elem*elem - 1))
+                    else
+                        None) [| 1 .. 10 |]
+            QUnit.equal k.[0] 3.0  "Array Choose"
+        )
 
     [<Js>]
     let Collect() =
-        let k = Array.collect (fun elem -> [| 0 .. elem |]) [| 1; 5; 10|]
-        Assert.AreEqual "Array Collect" 19 k.Length
+        QUnit.test "collect" (fun () ->
+            let k = Array.collect (fun elem -> [| 0 .. elem |]) [| 1; 5; 10|]
+            QUnit.equal 19 k.Length "Array Collect"
+        )
 
     [<Js>]
     let Concat() =
-        let multiplicationTable max = seq { for i in 1 .. max -> [| for j in 1 .. max -> (i, j, i*j) |] }
-        let array = Array.concat (multiplicationTable 3)
-        let i,j,k = array.[3]
-        Assert.AreEqual "Array Concat - i" i 2
-        Assert.AreEqual "Array Concat - j" j 1
-        Assert.AreEqual "Array Concat - k" k 2
+        QUnit.test "concat" (fun () ->
+            let multiplicationTable max = seq { for i in 1 .. max -> [| for j in 1 .. max -> (i, j, i*j) |] }
+            let array = Array.concat (multiplicationTable 3)
+            let i,j,k = array.[3]
+            QUnit.equal i 2 "Array Concat - i"
+            QUnit.equal j 1 "Array Concat - j"
+            QUnit.equal k 2 "Array Concat - k"
+        )
 
     [<Js>]
     let Filter() =
-        let k = Array.filter (fun elem -> elem % 2 = 0) [| 1 .. 10|]
-        Assert.AreEqual "Array Filter" k.[0] 2
+        QUnit.test "filter" (fun ()->
+            let k = Array.filter (fun elem -> elem % 2 = 0) [| 1 .. 10|]
+            QUnit.equal k.[0] 2 "Array Filter"
+        )
 
     [<Js>]
     let Rev() =
-        let a = Array.rev [|3;2;1;|]
-        Assert.AreEqual "Array Reverse" a.[0] 1
+        QUnit.test "rev" (fun () ->
+            let a = Array.rev [|3;2;1;|]
+            QUnit.equal a.[0] 1 "Array Reverse"
+        )
 
     [<Js>]
     let FilterChooseRev() =
-        let a =
-            [| 1 .. 10 |]
-            |> Array.filter (fun elem -> elem % 2 = 0)
-            |> Array.choose (fun elem -> if (elem <> 8) then Some(elem*elem) else None)
-            |> Array.rev
-        Assert.AreEqual "Array Filter Choose Reverse" a.[0] 100
+        QUnit.test "filter choose" (fun() ->
+            let a =
+                [| 1 .. 10 |]
+                |> Array.filter (fun elem -> elem % 2 = 0)
+                |> Array.choose (fun elem -> if (elem <> 8) then Some(elem*elem) else None)
+                |> Array.rev
+            QUnit.equal a.[0] 100 "Array Filter Choose Reverse"
+        )
 
     [<Js>]
     let Exists1() =
-        let allNegative = Array.exists (fun elem -> abs (elem) = elem) >> not
-        let res = allNegative [| -1; -2; -3 |]
-        Assert.AreEqual "Array Exists Equal" res true
+        QUnit.test "exist1" (fun () ->
+            let allNegative = Array.exists (fun elem -> abs (elem) = elem) >> not
+            let res = allNegative [| -1; -2; -3 |]
+            QUnit.equal res true "Array Exists Equal"
+        )
 
     [<Js>]
     let Exists2() =
-        let allNegative = Array.exists (fun elem -> abs (elem) = elem) >> not
-        let res = allNegative [| -1; 2; -3 |]
-        Assert.AreNotEqual "Array Exists Not Equal" res false
+        QUnit.test "exists2" (fun () ->
+            let allNegative = Array.exists (fun elem -> abs (elem) = elem) >> not
+            let res = allNegative [| -1; 2; -3 |]
+            QUnit.notEqual res false "Array Exists Not Equal"
+        )
 
     [<Js>]
     let Exists2Function() =
-        let haveEqualElement = Array.exists2 (fun elem1 elem2 -> elem1 = elem2)
-        let res = haveEqualElement [| 1; 2; 3 |] [| 3; 2; 1|]
-        Assert.AreEqual "Array Exists2" res true
+        QUnit.test "exsits2fun" (fun () ->
+            let haveEqualElement = Array.exists2 (fun elem1 elem2 -> elem1 = elem2)
+            let res = haveEqualElement [| 1; 2; 3 |] [| 3; 2; 1|]
+            QUnit.equal res true "Array Exists2"
+        )
 
     [<Js>]
     let ForAll() =
-        let allPositive = Array.forall (fun elem -> elem >= 0)
-        let res = allPositive [| 0; 1; 2; 3 |]
-        Assert.AreEqual "Array For All" res true
+        QUnit.test "forall" (fun () ->
+            let allPositive = Array.forall (fun elem -> elem >= 0)
+            let res = allPositive [| 0; 1; 2; 3 |]
+            QUnit.equal res true "Array For All"
+        )
 
     [<Js>]
     let ForAll2() =
-        let allEqual = Array.forall2 (fun elem1 elem2 -> elem1 = elem2)
-        let res = allEqual [| 1; 2 |] [| 1; 2 |]
-        Assert.AreEqual "Array ForAll2" res true
+        QUnit.test "forall2" (fun() ->
+            let allEqual = Array.forall2 (fun elem1 elem2 -> elem1 = elem2)
+            let res = allEqual [| 1; 2 |] [| 1; 2 |]
+            QUnit.equal res true "Array ForAll2"
+        )
 
     [<Js>]
     let FindAndFindIndex() =
-        let a1 = [| 1.. 10 |]
-        let i = a1 |> Array.find(fun a -> a = 5)
-        Assert.AreEqual "Array Find" 5 i
-        let i2 = a1 |> Array.findIndex(fun a -> a = 5)
-        Assert.AreEqual "Array Find" 4 i2
+        QUnit.test "findindex" (fun () ->
+            let a1 = [| 1.. 10 |]
+            let i = a1 |> Array.find(fun a -> a = 5)
+            QUnit.equal 5 i "Array Find"
+            let i2 = a1 |> Array.findIndex(fun a -> a = 5)
+            QUnit.equal 4 i2 "Array Find"
+        )
 
     [<Js>]
     let TryFind() =
-        let array = [|1..10|]
-        let item = array |> Array.tryFind(fun i -> i = 2)
-        match item with
-        | Some(i) -> Assert.AreEqual "Array Try Find" i 2
-        | None    -> failwith "Item Not Found"
+        QUnit.test "tryfind" (fun () ->
+            let array = [|1..10|]
+            let item = array |> Array.tryFind(fun i -> i = 2)
+            match item with
+            | Some(i) -> QUnit.equal i 2 "Array Try Find"
+            | None    -> failwith "Item Not Found"
+        )
 
     [<Js>]
     let Fill() =
-        let arrayFill1 = [| 1 .. 10 |]
-        Array.fill arrayFill1 3 5 0
-        Assert.AreEqual "Array Fill" arrayFill1.[3] 0
+        QUnit.test "fill" (fun () ->
+            let arrayFill1 = [| 1 .. 10 |]
+            Array.fill arrayFill1 3 5 0
+            QUnit.equal arrayFill1.[3] 0 "Array Fill"
+        )
 
     [<Js>]
     let Iterate() =
-        let array = [|1|]
-        array |> Array.iter(fun i -> Assert.AreEqual "Array Iterate" i 1)
+        QUnit.test "iterate" (fun () ->
+            let array = [|1|]
+            array |> Array.iter(fun i -> QUnit.equal i 1 "Array Iterate")
+        )
 
     [<Js>]
     let IterateIndexed() =
-        let array = [|1;2;|]
-        let array2 = [|1;2;|]
-        array
-        |> Array.iteri(fun idx i ->
-            Assert.AreEqual "Array Iterate Indexed" i array2.[idx]
+        QUnit.test "Iterate Indexed" (fun ()->
+            let array = [|1;2;|]
+            let array2 = [|1;2;|]
+            array
+            |> Array.iteri(fun idx i ->
+                QUnit.equal i array2.[idx] "Array Iterate Indexed"
+            )
         )
 
     [<Js>]
     let IterateIndexed2() =
-        let array = [|1;|]
-        let array2 = [|3;|]
-        array2
-        |> Array.iteri2(fun idx i1 i2 ->
-            Assert.AreEqual "Array Iterate Indexed2" i1 1
-            Assert.AreEqual "Array Iterate Indexed2" i2 3
-        ) array
+        QUnit.test "Iterate Indexed2" (fun () ->
+            let array = [|1;|]
+            let array2 = [|3;|]
+            array2
+            |> Array.iteri2(fun idx i1 i2 ->
+                QUnit.equal i1 1 "Array Iterate Indexed2"
+                QUnit.equal i2 3 "Array Iterate Indexed2"
+            ) array
+        )
 
     [<Js>]
     let Map() =
-        let array = [|1;2;|]
-        let array2 = array |> Array.map(fun i -> i + i)
-        Assert.AreEqual "Array Map" array2.[1] 4
+        QUnit.test "Map" (fun () ->
+            let array = [|1;2;|]
+            let array2 = array |> Array.map(fun i -> i + i)
+            QUnit.equal array2.[1] 4 "Array Map"
+        )
 
     [<Js>]
     let MapIndexed() =
-        let array = [|1;2;|]
-        let array2 = array |> Array.mapi(fun idx i -> idx + i)
-        Assert.AreEqual "Array MapIndexed" array2.[1] 3
+        QUnit.test "MapIndexed" (fun()->
+            let array = [|1;2;|]
+            let array2 = array |> Array.mapi(fun idx i -> idx + i)
+            QUnit.equal array2.[1] 3 "Array MapIndexed"
+        )
 
     [<Js>]
     let Map2() =
-        let array = [|1;2|]
-        let array2 = [|3;4|]
-        let resultArray = array2 |> Array.map2 (fun i1 i2 -> i1+i2) array
-        Assert.AreEqual "Array Map2" resultArray.[1] 6
+        QUnit.test "map2" (fun () ->
+            let array = [|1;2|]
+            let array2 = [|3;4|]
+            let resultArray = array2 |> Array.map2 (fun i1 i2 -> i1+i2) array
+            QUnit.equal resultArray.[1] 6 "Array Map2"
+        )
 
     [<Js>]
     let MapIndexed2() =
-        let array = [|1;2|]
-        let array2 = [|3;4|]
-        let resultArray = array2 |> Array.mapi2 (fun idx i1 i2 -> idx+i1+i2) array
-        Assert.AreEqual "Array MapIndexed2" resultArray.[1] 7
+        QUnit.test "map indexed2" (fun () ->
+            let array = [|1;2|]
+            let array2 = [|3;4|]
+            let resultArray = array2 |> Array.mapi2 (fun idx i1 i2 -> idx+i1+i2) array
+            QUnit.equal resultArray.[1] 7 "Array MapIndexed2"
+        )
 
     [<Js>]
     let Pick() =
-        let values = [| ("a", 1); ("b", 2); ("c", 3) |]
-        let resultPick = Array.pick (fun elem ->
-                            match elem with
-                            | (value, 2) -> Some value
-                            | _ -> None) values
-        Assert.AreEqual "Array Pick" "b" resultPick
+        QUnit.test "pick" (fun () ->
+            let values = [| ("a", 1); ("b", 2); ("c", 3) |]
+            let resultPick = Array.pick (fun elem ->
+                                match elem with
+                                | (value, 2) -> Some value
+                                | _ -> None) values
+            QUnit.equal "b" resultPick "Array Pick"
+        )
 
     [<Js>]
     let TryPick() =
-        let values = [| ("a", 1); ("b", 2); ("c", 3) |]
-        let resultPick = Array.tryPick (fun elem ->
-                            match elem with
-                            | (value, 2) -> Some value
-                            | _ -> None) values
-        match resultPick with
-        | Some(t) -> Assert.AreEqual "Array TryPick" "b" t
-        | None    -> failwith "TryPick failed"
+        QUnit.test "try pick" (fun ()->
+            let values = [| ("a", 1); ("b", 2); ("c", 3) |]
+            let resultPick = Array.tryPick (fun elem ->
+                                match elem with
+                                | (value, 2) -> Some value
+                                | _ -> None) values
+            match resultPick with
+            | Some(t) -> QUnit.equal "b" t "Array TryPick"
+            | None    -> failwith "TryPick failed"
+        )
 
     [<Js>]
     let Partition() =
-        let array = [|-2;-1;1;2;|]
-        let n,p = array |> Array.partition(fun t -> t < 0)
-        Assert.AreEqual "Array Partition" 2 n.Length
+        QUnit.test "partition" (fun()->
+            let array = [|-2;-1;1;2;|]
+            let n,p = array |> Array.partition(fun t -> t < 0)
+            QUnit.equal 2 n.Length "Array Partition"
+        )
 
     [<Js>]
     let Zip() =
-        let array1 = [| 1; 2; 3 |]
-        let array2 = [| -1; -2; -3 |]
-        let arrayZip = Array.zip array1 array2
-        let item1,item2 = Array.get arrayZip 1
-        Assert.AreEqual "Array Zip" 2 item1
-        Assert.AreEqual "Array Zip" -2 item2
+        QUnit.test "zip" (fun()->
+            let array1 = [| 1; 2; 3 |]
+            let array2 = [| -1; -2; -3 |]
+            let arrayZip = Array.zip array1 array2
+            let item1,item2 = Array.get arrayZip 1
+            QUnit.equal 2 item1 "Array Zip"
+            QUnit.equal -2 item2 "Array Zip"
+        )
 
     [<Js>]
     let Zip3() =
-        let array1 = [| 1; 2; 3 |]
-        let array2 = [| -1; -2; -3 |]
-        let array3 = [| -1; -2; -3 |]
-        let arrayZip = Array.zip3 array1 array2 array3
-        let item1,item2,item3 = Array.get arrayZip 1
-        Assert.AreEqual "Array Zip3" 2 item1
-        Assert.AreEqual "Array Zip3" -2 item2
-        Assert.AreEqual "Array Zip3" -2 item3
+        QUnit.test "zip3" (fun() ->
+            let array1 = [| 1; 2; 3 |]
+            let array2 = [| -1; -2; -3 |]
+            let array3 = [| -1; -2; -3 |]
+            let arrayZip = Array.zip3 array1 array2 array3
+            let item1,item2,item3 = Array.get arrayZip 1
+            QUnit.equal 2 item1 "Array Zip3"
+            QUnit.equal -2 item2 "Array Zip3"
+            QUnit.equal -2 item3 "Array Zip3"
+        )
 
     [<Js>]
     let Unzip() =
-        let array1, array2 = Array.unzip [| (1, 2); (3, 4) |]
-        Assert.AreEqual "Array Unzip" 2 array1.Length
-        Assert.AreEqual "Array Unzip" 2 array2.Length
+        QUnit.test "unzip" (fun () ->
+            let array1, array2 = Array.unzip [| (1, 2); (3, 4) |]
+            QUnit.equal 2 array1.Length "Array Unzip"
+            QUnit.equal 2 array2.Length "Array Unzip"
+        )
 
     [<Js>]
     let Unzip3() =
-        let array1, array2, array3 = Array.unzip3 [| (1, 2, 3); (3, 4, 3) |]
-        Assert.AreEqual "Array Unzip3" 2 array1.Length
-        Assert.AreEqual "Array Unzip3" 2 array2.Length
-        Assert.AreEqual "Array Unzip3" 2 array3.Length
+        QUnit.test "unzip3" (fun ()->
+            let array1, array2, array3 = Array.unzip3 [| (1, 2, 3); (3, 4, 3) |]
+            QUnit.equal 2 array1.Length "Array Unzip3"
+            QUnit.equal 2 array2.Length "Array Unzip3"
+            QUnit.equal 2 array3.Length "Array Unzip3"
+        )
 
     [<Js>]
     let Fold() =
-        let sumArray array = Array.fold (fun acc elem -> acc + elem) 0 array
-        let a = [|1;2;3|]
-        let res = sumArray a
-        Assert.AreEqual "Array Fold" 6 res
+        QUnit.test "fold" (fun () ->
+            let sumArray array = Array.fold (fun acc elem -> acc + elem) 0 array
+            let a = [|1;2;3|]
+            let res = sumArray a
+            QUnit.equal 6 res "Array Fold"
+        )
 
     [<Js>]
     let FoldBack() =
-        let subtractArrayBack array1 = Array.foldBack (fun elem acc -> elem - acc) array1 0
-        let a = [|1;2;3|]
-        let res = subtractArrayBack a
-        Assert.AreEqual "Array FoldBack" 2 res
+        QUnit.test "foldback" (fun ()->
+            let subtractArrayBack array1 = Array.foldBack (fun elem acc -> elem - acc) array1 0
+            let a = [|1;2;3|]
+            let res = subtractArrayBack a
+            QUnit.equal 2 res "Array FoldBack"
+        )
 
     [<Js>]
     let Fold2() =
-        let sumGreatest array1 array2 =
-            Array.fold2 (fun acc elem1 elem2 ->
-                acc + max elem1 elem2) 0 array1 array2
-        let sum = sumGreatest [| 1; 2; 3 |] [| 3; 2; 1 |]
-        Assert.AreEqual "Array Fold2" 8 sum
+        QUnit.test "fold2" (fun ()->
+            let sumGreatest array1 array2 =
+                Array.fold2 (fun acc elem1 elem2 ->
+                    acc + max elem1 elem2) 0 array1 array2
+            let sum = sumGreatest [| 1; 2; 3 |] [| 3; 2; 1 |]
+            QUnit.equal 8 sum "Array Fold2"
+        )
 
     [<Js>]
     let FoldBack2() =
-        let subtractArrayBack array1 array2 = Array.foldBack2 (fun elem acc1 acc2 -> elem - (acc1 - acc2)) array1 array2 0
-        let a1 = [|1;2;3|]
-        let a2 = [|4;5;6|]
-        let res = subtractArrayBack a1 a2
-        Assert.AreEqual "Array FoldBack2" -9 res
+        QUnit.test "fold back2" (fun() ->
+            let subtractArrayBack array1 array2 = Array.foldBack2 (fun elem acc1 acc2 -> elem - (acc1 - acc2)) array1 array2 0
+            let a1 = [|1;2;3|]
+            let a2 = [|4;5;6|]
+            let res = subtractArrayBack a1 a2
+            QUnit.equal -9 res "Array FoldBack2"
+        )
 
     [<Js>]
     let Scan() =
-        let initialBalance = 1122.73
-        let transactions = [| -100.00; +450.34; -62.34; -127.00; -13.50; -12.92 |]
-        let balances =
-            Array.scan (fun balance transactionAmount -> balance + transactionAmount) initialBalance transactions
-        Assert.AreEqual "Array Scan" 1022.73 balances.[1]
+        QUnit.test "scan" (fun() ->
+            let initialBalance = 1122.73
+            let transactions = [| -100.00; +450.34; -62.34; -127.00; -13.50; -12.92 |]
+            let balances =
+                Array.scan (fun balance transactionAmount -> balance + transactionAmount) initialBalance transactions
+            QUnit.equal 1022.73 balances.[1] "Array Scan"
+        )
 
     [<Js>]
     let ScanBack() =
-        let subtractArrayBack array1 = Array.scanBack (fun elem acc -> elem - acc) array1 0
-        let a = [|1;2;3|]
-        let res = subtractArrayBack a
-        Assert.AreEqual "Array ScanBack" 2 res.[0]
+        QUnit.test "scan back" (fun () ->
+            let subtractArrayBack array1 = Array.scanBack (fun elem acc -> elem - acc) array1 0
+            let a = [|1;2;3|]
+            let res = subtractArrayBack a
+            QUnit.equal 2 res.[0] "Array ScanBack"
+        )
 
     [<Js>]
     let Reduce() =
-        let names = [| "A"; "man"; "landed"; "on"; "the"; "moon" |]
-        let sentence = names |> Array.reduce (fun acc item -> acc + " " + item)
-        Assert.AreEqual "Array Reduce" sentence "A man landed on the moon"
+        QUnit.test "reduce" (fun () ->
+            let names = [| "A"; "man"; "landed"; "on"; "the"; "moon" |]
+            let sentence = names |> Array.reduce (fun acc item -> acc + " " + item)
+            QUnit.equal sentence "A man landed on the moon" "Array Reduce"
+        )
 
     [<Js>]
     let ReduceBack() =
-        let res = Array.reduceBack (fun elem acc -> elem - acc) [| 1; 2; 3; 4 |]
-        Assert.AreEqual "Array Reduce Back" res -2
+        QUnit.test "reduce back" (fun () ->
+            let res = Array.reduceBack (fun elem acc -> elem - acc) [| 1; 2; 3; 4 |]
+            QUnit.equal res -2 "Array Reduce Back"
+        )
 
     [<Js>]
     let SortInPlace() =
-        let array = [|10;2;4;1|]
-        Array.sortInPlace array
-        Assert.AreEqual "Array SortInPlace" 1 array.[0]
+        QUnit.test "sort in place" (fun () ->
+            let array = [|10;2;4;1|]
+            Array.sortInPlace array
+            QUnit.equal 1 array.[0] "Array SortInPlace"
+        )
 
     [<Js>]
     let SortInPlaceBy() =
-        let array1 = [|1; 4; 8; -2; 5|]
-        Array.sortInPlaceBy (fun elem -> abs elem) array1
-        Assert.AreEqual "Array SortInPlaceBy" 1 array1.[0]
+        QUnit.test "sort in place by" (fun () ->
+            let array1 = [|1; 4; 8; -2; 5|]
+            Array.sortInPlaceBy (fun elem -> abs elem) array1
+            QUnit.equal 1 array1.[0] "Array SortInPlaceBy"
+        )
 
     [<Js>]
     let SortInPlaceWith() =
-        let array1 = [|1; 4; 8; -2; 5|]
-        Array.sortInPlaceWith (fun e1 e2 -> e1-e2) array1
-        Assert.AreEqual "Array SortInPlaceWith" -2 array1.[0]
+        QUnit.test "sort in place with" (fun () ->
+            let array1 = [|1; 4; 8; -2; 5|]
+            Array.sortInPlaceWith (fun e1 e2 -> e1-e2) array1
+            QUnit.equal -2 array1.[0] "Array SortInPlaceWith"
+        )
 
     [<Js>]
     let SortWith() =
-        let array1 = [|1; 4; 8; -2; 5|]
-        let array2 = Array.sortWith(fun e1 e2 -> e1-e2) array1
-        Assert.AreEqual "Array SortWith" -2 array2.[0]
+        QUnit.test "sort with" (fun () ->
+            let array1 = [|1; 4; 8; -2; 5|]
+            let array2 = Array.sortWith(fun e1 e2 -> e1-e2) array1
+            QUnit.equal -2 array2.[0] "Array SortWith"
+        )
 
     [<Js>]
     let Sort() =
-        let array1 = [|1; 4; 8; -2; 5|]
-        let array2 = Array.sort array1
-        Assert.AreEqual "Array Sort" -2 array2.[0]
+        QUnit.test "sort" (fun () ->
+            let array1 = [|1; 4; 8; -2; 5|]
+            let array2 = Array.sort array1
+            QUnit.equal -2 array2.[0] "Array Sort"
+        )
 
     [<Js>]
     let Sort2() =
-        let array1 = [|"Womciw"; "Beosudo"; "Guyx"; "Rouh"; "Iibow"; "Tae"; "Ebiucly"; "Gonumaf";  "Hiowvivb"; |]
-        let array2 = [|"Pye"; "Gyhsy"; "Lhfi"; "Ouqilfo"; "Ymukoed"; "Nhap"; "Aguccet"; "Hahd"; "Debcok" |]
-        let names = Array.zip array1 array2 |> Array.map(fun (f,s)-> f + " " + s) |> Array.sort
-        Assert.AreEqual "Array Sort2" "Iibow Ymukoed" names.[5]
+        QUnit.test "sort2" (fun () ->
+            let array1 = [|"Womciw"; "Beosudo"; "Guyx"; "Rouh"; "Iibow"; "Tae"; "Ebiucly"; "Gonumaf";  "Hiowvivb"; |]
+            let array2 = [|"Pye"; "Gyhsy"; "Lhfi"; "Ouqilfo"; "Ymukoed"; "Nhap"; "Aguccet"; "Hahd"; "Debcok" |]
+            let names = Array.zip array1 array2 |> Array.map(fun (f,s)-> f + " " + s) |> Array.sort
+            QUnit.equal "Iibow Ymukoed" names.[5] "Array Sort2"
+        )
 
     [<Js>]
     let Permute() =
-        let array1 = [|1;2;3;4;5|]
-        let n = array1.Length
-        let permute = Array.permute(fun idx -> idx % n) array1
-        Assert.AreEqual "Array Permute" 1 permute.[0]
+        QUnit.test "permute" (fun () ->
+            let array1 = [|1;2;3;4;5|]
+            let n = array1.Length
+            let permute = Array.permute(fun idx -> idx % n) array1
+            QUnit.equal 1 permute.[0] "Array Permute"
+        )
 
     [<Js>]
     let Sum() =
-        let a = [|1;2;3;4;5|]
-        let s = Array.sum a
-        Assert.AreEqual "Array Sum" s 15
+        QUnit.test "sum" (fun () ->
+            let a = [|1;2;3;4;5|]
+            let s = Array.sum a
+            QUnit.equal s 15 "Array Sum"
+        )
 
     [<Js>]
     let SumBy() =
-        let s =
-            [| 1 .. 10 |]
-            |> Array.sumBy (fun x -> x * x)
-        Assert.AreEqual "Array Sumby" 385 s
+        QUnit.test "sumby" (fun () ->
+            let s =
+                [| 1 .. 10 |]
+                |> Array.sumBy (fun x -> x * x)
+            QUnit.equal 385 s "Array Sumby"
+        )
 
     [<Js>]
     let Min() =
-        let a = [|1;2;3;4|]
-        let s = Array.min a
-        Assert.AreEqual "Array Min" 1 s
+        QUnit.test "min" (fun () ->
+            let a = [|1;2;3;4|]
+            let s = Array.min a
+            QUnit.equal 1 s "Array Min"
+        )
 
     [<Js>]
     let Max() =
-        let a = [|1;2;3;4|]
-        let s = Array.max a
-        Assert.AreEqual "Array Max" 4 s
+        QUnit.test "max" (fun () ->
+            let a = [|1;2;3;4|]
+            let s = Array.max a
+            QUnit.equal 4 s "Array Max"
+        )
 
     [<Js>]
     let MinBy() =
-        let r =
-            [| -10 .. 10 |]
-            |> Array.minBy (fun x -> x * x - 1)
-        Assert.AreEqual "Array MinBy" 0 r
+        QUnit.test "minby" (fun () ->
+            let r =
+                [| -10 .. 10 |]
+                |> Array.minBy (fun x -> x * x - 1)
+            QUnit.equal 0 r "Array MinBy"
+        )
 
     [<Js>]
     let MaxBy() =
-        let r =
-            [| -10 .. 10 |]
-            |> Array.maxBy (fun x -> x * x - 1)
-        Assert.AreEqual "Array MaxBy" -10 r
+        QUnit.test "maxby" (fun () ->
+            let r =
+                [| -10 .. 10 |]
+                |> Array.maxBy (fun x -> x * x - 1)
+            QUnit.equal -10 r "Array MaxBy"
+        )
 
     [<Js>]
     let Average() =
-        let r = [|1.0 .. 10.0|] |> Array.average
-        Assert.AreEqual "Array Average" 5.5 r
+        QUnit.test "average" (fun () ->
+            let r = [|1.0 .. 10.0|] |> Array.average
+            QUnit.equal 5.5 r "Array Average"
+        )
 
     [<Js>]
     let AverageBy() =
-        let avg2 = Array.averageBy (fun elem -> float elem) [|1 .. 10|]
-        Assert.AreEqual "Array AverageBy" 5.5 avg2
+        QUnit.test "avgby" (fun () ->
+            let avg2 = Array.averageBy (fun elem -> float elem) [|1 .. 10|]
+            QUnit.equal 5.5 avg2 "Array AverageBy"
+        )
 
     [<Js>]
     let ToList() =
-        let array = [|1;2;3|]
-        let list = Array.toList array
-        Assert.AreEqual "Array ToList" 1 list.Head
+        QUnit.test "tolist" (fun () ->
+            let array = [|1;2;3|]
+            let list = Array.toList array
+            QUnit.equal 1 list.Head "Array ToList"
+        )
 
     [<Js>]
     let OfList() =
-        let list = [1;2;3]
-        let a = Array.ofList list
-        Assert.AreEqual "Array OfList" 1 a.[0]
+        QUnit.test "oflist" (fun () ->
+            let list = [1;2;3]
+            let a = Array.ofList list
+            QUnit.equal 1 a.[0] "Array OfList"
+        )
 
     [<Js>]
     let ToSeq() =
-        let a = [|1;2;3|]
-        let sequence = Array.toSeq a
-        use e = sequence.GetEnumerator()
-        e.MoveNext() |> ignore
-        Assert.AreEqual "Array ToSeq" 1 e.Current
+        QUnit.test "toseq" (fun () ->
+            let a = [|1;2;3|]
+            let sequence = Array.toSeq a
+            use e = sequence.GetEnumerator()
+            e.MoveNext() |> ignore
+            QUnit.equal 1 e.Current "Array ToSeq"
+        )
 
     [<Js>]
     let OfSeq() =
-        let sequence = seq { 1..5 }
-        let array = Array.ofSeq sequence
-        Assert.AreEqual "Array OfSeq" 1 array.[0]
+        QUnit.test "ofseq" (fun ()->
+            let sequence = seq { 1..5 }
+            let array = Array.ofSeq sequence
+            QUnit.equal 1 array.[0] "Array OfSeq"
+        )
+
+    [<Js>]
+    let run() =
+        QUnit.moduleDeclare "Array tests"
+        Declare()
+        Length()
+        DeclareRange()
+        ZeroCreate()
+        CreateGetSet()
+        Init()
+        Copy()
+        Sub()
+        Append()
+        Choose()
+        Collect()
+        Concat()
+        Filter()
+        Rev()
+        FilterChooseRev()
+        Exists1()
+        Exists2()
+        Exists2Function()
+        ForAll()
+        ForAll2()
+        FindAndFindIndex()
+        TryFind()
+        Fill()
+        Iterate()
+        IterateIndexed()
+        IterateIndexed2()
+        Map()
+        MapIndexed()
+        Map2()
+        MapIndexed2()
+        Pick()
+        TryPick()
+        Partition()
+        Zip()
+        Zip3()
+        Unzip()
+        Unzip3()
+        Fold()
+        FoldBack()
+        Fold2()
+        FoldBack2()
+        Scan()
+        ScanBack()
+        Reduce()
+        ReduceBack()
+        SortInPlace()
+        SortInPlaceBy()
+        SortInPlaceWith()
+        SortWith()
+        Sort()
+        Sort2()
+        Permute()
+        Sum()
+        SumBy()
+        Min()
+        Max()
+        MinBy()
+        MaxBy()
+        Average()
+        AverageBy()
+        ToList()
+        OfList()
+        ToSeq()
+        OfSeq()

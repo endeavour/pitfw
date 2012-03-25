@@ -1,46 +1,59 @@
 ﻿namespace Pit.Test
 open Pit
+open Pit.Javascript.JQuery
 
 module ListTest =
 
     [<Js>]
     let Declare1() =
-        let list123 = [ 1; 2; 3 ]
-        Assert.AreEqual "Declare List type 1:" list123.Head 1
+        QUnit.test "declare1" (fun() ->
+            let list123 = [ 1; 2; 3 ]
+            QUnit.equal list123.Head 1 "Declare List type 1:"
+        )
 
     [<Js>]
     let Declare2() =
-        let list123 = [ 1 .. 10 ]
-        Assert.AreEqual "Declare List type 2:" list123.Head 1
+        QUnit.test "declare2" (fun() ->
+            let list123 = [ 1 .. 10 ]
+            QUnit.equal list123.Head 1 "Declare List type 2:"
+        )
 
     [<Js>]
     let Declare3() =
-        let list123 = [ for i in 1 .. 10 -> i*i ]
-        Assert.AreEqual "Declare List type 3:" list123.Head 1
+        QUnit.test "declare3" (fun() ->
+            let list123 = [ for i in 1 .. 10 -> i*i ]
+            QUnit.equal list123.Head 1 "Declare List type 3:"
+        )
 
     [<Js>]
     let AttachElements() =
-        let list123 = [ for i in 1 .. 10 -> i*i ]
-        let list2 = 100 :: list123
-        Assert.AreEqual "Attach elements:" list2.Head 100
+        QUnit.test "attach elements" (fun() ->
+            let list123 = [ for i in 1 .. 10 -> i*i ]
+            let list2 = 100 :: list123
+            QUnit.equal list2.Head 100 "Attach elements:"
+        )
 
     [<Js>]
     let ConcatenateElements() =
-        let list1 = [ for i in 1 .. 10 -> i*i ]
-        let list2 = [100]
-        let list3 = list1 @ list2
-        Assert.AreEqual "Concatenate elements:" list3.Head 1
+        QUnit.test "concatenate" (fun() ->
+            let list1 = [ for i in 1 .. 10 -> i*i ]
+            let list2 = [100]
+            let list3 = list1 @ list2
+            QUnit.equal list3.Head 1 "Concatenate elements:"
+        )
 
     [<Js>]
     let Properties() =
-        let list1 = [ 1; 2; 3 ]
-        // Properties
-        Assert.AreEqual "List Empty property:" list1.IsEmpty false
-        Assert.AreEqual "List Length property:" list1.Length 3
-        Assert.AreEqual "List Head property:" list1.Head 1
-        Assert.AreEqual "List Tail property" list1.Tail.Head 2
-        Assert.AreEqual "List.Tail.Tail.Head" list1.Tail.Tail.Head 3
-        Assert.AreEqual "List.Item(1)" (list1.Item(1)) 2
+        QUnit.test "properties" (fun() ->
+            let list1 = [ 1; 2; 3 ]
+            // Properties
+            QUnit.equal list1.IsEmpty false "List Empty property:"
+            QUnit.equal list1.Length 3 "List Length property:"
+            QUnit.equal list1.Head 1 "List Head property:"
+            QUnit.equal list1.Tail.Head 2 "List Tail property"
+            QUnit.equal list1.Tail.Tail.Head 3 "List.Tail.Tail.Head"
+            QUnit.equal (list1.Item(1)) 2 "List.Item(1)"
+        )
 
     [<Js>]
     let Recursion1() =
@@ -51,8 +64,10 @@ module ListTest =
                | [] -> acc
            loop list 0
 
-        let list = [ 1; 2; 3]
-        Assert.AreEqual "List Recursion 1" (sum list) 6
+        QUnit.test "recursion1" (fun() ->
+            let list = [ 1; 2; 3]
+            QUnit.equal (sum list) 6 "List Recursion 1"
+        )
 
     [<Js>]
     let Recursion2() =
@@ -68,54 +83,68 @@ module ListTest =
             let max = int (sqrt (float n))
             RemoveAllMultiples [ 2 .. max ] [ 1 .. n ]
 
-        let primes = (GetPrimesUpTo 100)
-        Assert.AreEqual "List Recursion 2 - First element" (List.nth primes 1) 2
-        Assert.AreEqual "List Recursion 2 - 25th element" (List.nth primes 25) 97
+        QUnit.test "recursion2" (fun() ->
+            let primes = (GetPrimesUpTo 100)
+            QUnit.equal (List.nth primes 1) 2 "List Recursion 2 - First element"
+            QUnit.equal (List.nth primes 25) 97 "List Recursion 2 - 25th element"
+        )
 
     [<Js>]
     let containsNumber number list = List.exists (fun elem -> elem = number) list
 
     [<Js>]
     let BooleanOperation() =
-        let list0to3 = [0 .. 3]
-        Assert.AreEqual "Boolean Operation:" (containsNumber 0 list0to3) true
+        QUnit.test "boolean op" (fun()->
+            let list0to3 = [0 .. 3]
+            QUnit.equal (containsNumber 0 list0to3) true "Boolean Operation:"
+        )
 
     [<Js>]
     let isEqualElement list1 list2 = List.exists2 (fun elem1 elem2 -> elem1 = elem2) list1 list2
 
     [<Js>]
     let Exists2() =
-        let list1to5 = [ 1 .. 5 ]
-        let list5to1 = [ 5 .. -1 .. 1 ]
-        let result = (isEqualElement list1to5 list5to1)
-        if result then
-            Assert.AreEqual "List.exists2 function." result true
-        else
-            Assert.AreEqual "List.exists2 function." result false
+        QUnit.test "exists2" (fun()->
+            let list1to5 = [ 1 .. 5 ]
+            let list5to1 = [ 5 .. -1 .. 1 ]
+            let result = (isEqualElement list1to5 list5to1)
+            if result then
+                QUnit.equal result true "List.exists2 function."
+            else
+                QUnit.equal result false "List.exists2 function."
+        )
 
     [<Js>]
     let ForAll() =
-        let isAllZeroes list = List.forall (fun elem -> elem = 0.0) list
-        Assert.AreEqual "List.forall function" (isAllZeroes [0.0; 0.0]) true
-        Assert.AreEqual "List.forall function" (isAllZeroes [0.0; 1.0]) false
+        QUnit.test "forall" (fun () ->
+            let isAllZeroes list = List.forall (fun elem -> elem = 0.0) list
+            QUnit.equal (isAllZeroes [0.0; 0.0]) true "List.forall function"
+            QUnit.equal (isAllZeroes [0.0; 1.0]) false "List.forall function"
+        )
 
     [<Js>]
     let listEqual list1 list2 = List.forall2 (fun elem1 elem2 -> elem1 = elem2) list1 list2
 
     [<Js>]
     let ForAll2() =
-        Assert.AreEqual "List.forall2 function" (listEqual [0; 1; 2] [0; 1; 2]) true
-        Assert.AreEqual "List.forall2 function" (listEqual [0; 0; 0] [0; 1; 0]) false
+        QUnit.test "forall2" (fun () ->
+            QUnit.equal (listEqual [0; 1; 2] [0; 1; 2]) true "List.forall2 function"
+            QUnit.equal (listEqual [0; 0; 0] [0; 1; 0]) false "List.forall2 function"
+        )
 
     [<Js>]
     let Sort() =
-        let sortedList1 = List.sort [1; 4; 8; -2; 5]
-        Assert.AreEqual "List.sort function" (List.nth sortedList1 1) 1
+        QUnit.test "sort" (fun() ->
+            let sortedList1 = List.sort [1; 4; 8; -2; 5]
+            QUnit.equal (List.nth sortedList1 1) 1 "List.sort function"
+        )
 
     [<Js>]
     let SortBy() =
-        let sortedList2 = List.sortBy (fun elem -> abs elem) [1; 4; 8; -2; 5]
-        Assert.AreEqual "List.sortBy function" (List.nth sortedList2 1) -2
+        QUnit.test "sortby" (fun() ->
+            let sortedList2 = List.sortBy (fun elem -> abs elem) [1; 4; 8; -2; 5]
+            QUnit.equal (List.nth sortedList2 1) -2 "List.sortBy function"
+        )
 
 //    type Widget = { ID: int; Rev: int }
 //Issue in js generation
@@ -138,86 +167,102 @@ module ListTest =
 //            ]
 //
 //        let sortedWidgetList = List.sortWith compareWidgets listToCompare
-//        Assert.AreEqual "List.sortWith function" sortedWidgetList.Head.ID 92
-//        Assert.AreEqual "List.sortWith function" sortedWidgetList.Head.Rev 1
+//        QUnit.equal "List.sortWith function" sortedWidgetList.Head.ID 92
+//        QUnit.equal "List.sortWith function" sortedWidgetList.Head.Rev 1
 
     [<Js>]
     let Find() =
-        let isDivisibleBy number elem = elem % number = 0
-        let result = List.find (isDivisibleBy 5) [ 1 .. 100 ]
-        Assert.AreEqual "List.find function" result 5
+        QUnit.test "find" (fun() ->
+            let isDivisibleBy number elem = elem % number = 0
+            let result = List.find (isDivisibleBy 5) [ 1 .. 100 ]
+            QUnit.equal result 5 "List.find function"
+        )
 
     [<Js>]
     let Pick() =
-        let valuesList = [ ("a", 1); ("b", 2); ("c", 3) ]
-        let resultPick = List.pick (fun elem ->
-                            match elem with
-                            | (value, 2) -> Some value
-                            | _ -> None) valuesList
-        Assert.AreEqual "List.pick function"  resultPick "b"
+        QUnit.test "pick" (fun() ->
+            let valuesList = [ ("a", 1); ("b", 2); ("c", 3) ]
+            let resultPick = List.pick (fun elem ->
+                                match elem with
+                                | (value, 2) -> Some value
+                                | _ -> None) valuesList
+            QUnit.equal resultPick "b" "List.pick function"
+        )
 
     [<Js>]
     let TryFind() =
-        let list1d = [1; 3; 7; 9; 11; 13; 15; 19; 22; 29; 36]
-        let isEven x = x % 2 = 0
-        match List.tryFind isEven list1d with
-        | Some value -> Assert.AreEqual "List.tryFind function" value 22
-        | None -> ()
+        QUnit.test "tryfind" (fun() ->
+            let list1d = [1; 3; 7; 9; 11; 13; 15; 19; 22; 29; 36]
+            let isEven x = x % 2 = 0
+            match List.tryFind isEven list1d with
+            | Some value -> QUnit.equal value 22 "List.tryFind function"
+            | None -> ()
 
-        match List.tryFindIndex isEven list1d with
-        | Some value -> Assert.AreEqual "List.tryFindIndex function" value 8
-        | None -> ()
+            match List.tryFindIndex isEven list1d with
+            | Some value -> QUnit.equal value 8 "List.tryFindIndex function"
+            | None -> ()
+        )
 
     [<Js>]
     let ArithemeticOperations() =
-        // Compute the sum of the first 10 integers by using List.sum.
-        let sum1 = List.sum [1 .. 10]
-        Assert.AreEqual "List.sum function" sum1 55
+        QUnit.test "arithmetic operations" (fun() ->
+            // Compute the sum of the first 10 integers by using List.sum.
+            let sum1 = List.sum [1 .. 10]
+            QUnit.equal sum1 55 "List.sum function"
 
-        // Compute the sum of the squares of the elements of a list by using List.sumBy.
-        let sum2 = List.sumBy (fun elem -> elem*elem) [1 .. 10]
-        Assert.AreEqual "List.sumBy function" sum2 385
+            // Compute the sum of the squares of the elements of a list by using List.sumBy.
+            let sum2 = List.sumBy (fun elem -> elem*elem) [1 .. 10]
+            QUnit.equal sum2 385 "List.sumBy function"
 
-        // Compute the average of the elements of a list by using List.average.
-        let avg1 = List.average [0.0; 1.0; 1.0; 2.0]
-        Assert.AreEqual "List.average function" avg1 1.0
+            // Compute the average of the elements of a list by using List.average.
+            let avg1 = List.average [0.0; 1.0; 1.0; 2.0]
+            QUnit.equal avg1 1.0 "List.average function"
 
-        let avg2 = List.averageBy (fun elem -> float elem) [1 .. 10]
-        Assert.AreEqual "List.averageBy function" avg2 5.5
+            let avg2 = List.averageBy (fun elem -> float elem) [1 .. 10]
+            QUnit.equal avg2 5.5 "List.averageBy function"
+        )
 
     [<Js>]
     let Zip() =
-        let list1 = [ 1; 2; 3 ]
-        let list2 = [ -1; -2; -3 ]
-        let listZip = List.zip list1 list2
-        let f = fst listZip.Head
-        Assert.AreEqual "List.zip function" f 1
-        Assert.AreEqual "List.zip function" (snd listZip.Head) -1
+        QUnit.test "zip" (fun() ->
+            let list1 = [ 1; 2; 3 ]
+            let list2 = [ -1; -2; -3 ]
+            let listZip = List.zip list1 list2
+            let f = fst listZip.Head
+            QUnit.equal f 1 "List.zip function"
+            QUnit.equal (snd listZip.Head) -1 "List.zip function"
+        )
 
     [<Js>]
     let Zip3() =
-        let list1 = [ 1; 2; 3 ]
-        let list2 = [ -1; -2; -3 ]
-        let list3 = [ 0; 0; 0]
-        let listZip3 = List.zip3 list1 list2 list3
-        let f1,f2,f3 = listZip3.Head
-        Assert.AreEqual "List.zip function" f1 1
-        Assert.AreEqual "List.zip function" f2 -1
-        Assert.AreEqual "List.zip function" f3 0
+        QUnit.test "zip3" (fun() ->
+            let list1 = [ 1; 2; 3 ]
+            let list2 = [ -1; -2; -3 ]
+            let list3 = [ 0; 0; 0]
+            let listZip3 = List.zip3 list1 list2 list3
+            let f1,f2,f3 = listZip3.Head
+            QUnit.equal f1 1 "List.zip function"
+            QUnit.equal f2 -1 "List.zip function"
+            QUnit.equal f3 0 "List.zip function"
+        )
 
     [<Js>]
     let UnZip() =
-        let lists = List.unzip [(1,2); (3,4)]
-        Assert.AreEqual "List.unzip function" (fst lists).Head 1
-        Assert.AreEqual "List.unzip function" (snd lists).Head 2
+        QUnit.test "unzip" (fun() ->
+            let lists = List.unzip [(1,2); (3,4)]
+            QUnit.equal (fst lists).Head 1 "List.unzip function"
+            QUnit.equal (snd lists).Head 2 "List.unzip function"
+        )
 
     [<Js>]
     let UnZip3() =
-        let listsUnzip3 = List.unzip3 [(1,2,3); (4,5,6)]
-        let i1,i2,i3 = listsUnzip3
-        Assert.AreEqual "List.unzip3 function" i1.Head 1
-        Assert.AreEqual "List.unzip3 function" i2.Head 2
-        Assert.AreEqual "List.unzip3 function" i3.Head 3
+        QUnit.test "unzip3" (fun() ->
+            let listsUnzip3 = List.unzip3 [(1,2,3); (4,5,6)]
+            let i1,i2,i3 = listsUnzip3
+            QUnit.equal i1.Head 1 "List.unzip3 function"
+            QUnit.equal i2.Head 2 "List.unzip3 function"
+            QUnit.equal i3.Head 3 "List.unzip3 function"
+        )
 
 //    [<Js>]
 //    let ListIter() =
@@ -234,82 +279,106 @@ module ListTest =
 
     [<Js>]
     let Map() =
-        let list1 = [1; 2; 3]
-        let newList = List.map (fun x -> x + 1) list1
-        Assert.AreEqual "List.map function" newList.Head 2
+        QUnit.test "map" (fun () ->
+            let list1 = [1; 2; 3]
+            let newList = List.map (fun x -> x + 1) list1
+            QUnit.equal newList.Head 2 "List.map function"
+        )
 
     [<Js>]
     let Map2() =
-        let list1 = [1; 2; 3]
-        let list2 = [4; 5; 6]
-        let sumList = List.map2 (fun x y -> x + y) list1 list2
-        Assert.AreEqual "List.map2 function" sumList.Head 5
+        QUnit.test "map2" (fun() ->
+            let list1 = [1; 2; 3]
+            let list2 = [4; 5; 6]
+            let sumList = List.map2 (fun x y -> x + y) list1 list2
+            QUnit.equal sumList.Head 5 "List.map2 function"
+        )
 
     [<Js>]
     let Map3() =
-        let list1 = [1; 2; 3]
-        let list2 = [4; 5; 6]
-        let newList2 = List.map3 (fun x y z -> x + y + z) list1 list2 [2; 3; 4]
-        Assert.AreEqual "List.map3 function" newList2.Head 7
+        QUnit.test "map3" (fun() ->
+            let list1 = [1; 2; 3]
+            let list2 = [4; 5; 6]
+            let newList2 = List.map3 (fun x y z -> x + y + z) list1 list2 [2; 3; 4]
+            QUnit.equal newList2.Head 7 "List.map3 function"
+        )
 
     [<Js>]
     let Mapi() =
-        let list1 = [1; 2; 3]
-        let newListAddIndex = List.mapi (fun i x -> x + i) list1
-        Assert.AreEqual "List.mapi function" newListAddIndex.Head 1
+        QUnit.test "mapi" (fun() ->
+            let list1 = [1; 2; 3]
+            let newListAddIndex = List.mapi (fun i x -> x + i) list1
+            QUnit.equal newListAddIndex.Head 1 "List.mapi function"
+        )
 
     [<Js>]
     let Mapi2() =
-        let list1 = [1; 2; 3]
-        let list2 = [4; 5; 6]
-        let listAddTimesIndex = List.mapi2 (fun i x y -> (x + y) * i) list1 list2
-        Assert.AreEqual "List.mapi2 function" listAddTimesIndex.Head 0
+        QUnit.test "mapi2" (fun() ->
+            let list1 = [1; 2; 3]
+            let list2 = [4; 5; 6]
+            let listAddTimesIndex = List.mapi2 (fun i x y -> (x + y) * i) list1 list2
+            QUnit.equal listAddTimesIndex.Head 0 "List.mapi2 function"
+        )
 
     [<Js>]
     let Collect() =
-        let list1 = [1; 2; 3]
-        let collectList = List.collect (fun x -> [for i in 1..3 -> x * i]) list1
-        Assert.AreEqual "List.collect function" collectList.Head 1
+        QUnit.test "collect" (fun () ->
+            let list1 = [1; 2; 3]
+            let collectList = List.collect (fun x -> [for i in 1..3 -> x * i]) list1
+            QUnit.equal collectList.Head 1 "List.collect function"
+        )
 
     [<Js>]
     let Filter() =
-        let evenOnlyList = List.filter (fun x -> x % 2 = 0) [1; 2; 3; 4; 5; 6]
-        Assert.AreEqual "List.filter function" (evenOnlyList|>List.length) 3
+        QUnit.test "filter" (fun() ->
+            let evenOnlyList = List.filter (fun x -> x % 2 = 0) [1; 2; 3; 4; 5; 6]
+            QUnit.equal (evenOnlyList|>List.length) 3 "List.filter function"
+        )
 
     [<Js>]
     let Choose() =
-        let k =
-            List.choose (fun elem ->
-                if elem % 2 = 0 then
-                    Some(float (elem*elem - 1))
-                else
-                    None) [ 1 .. 10 ]
-        Assert.AreEqual "List.choose function" k.Head 3.0
+        QUnit.test "choose" (fun () ->
+            let k =
+                List.choose (fun elem ->
+                    if elem % 2 = 0 then
+                        Some(float (elem*elem - 1))
+                    else
+                        None) [ 1 .. 10 ]
+            QUnit.equal k.Head 3.0 "List.choose function"
+        )
 
     [<Js>]
     let Append() =
-        let list1to10 = List.append [1; 2; 3] [4; 5; 6; 7; 8; 9; 10]
-        Assert.AreEqual "List.append function" (list1to10|>List.length) 10
+        QUnit.test "append" (fun () ->
+            let list1to10 = List.append [1; 2; 3] [4; 5; 6; 7; 8; 9; 10]
+            QUnit.equal (list1to10|>List.length) 10 "List.append function"
+        )
 
     [<Js>]
     let Concat() =
-        let listResult = List.concat [ [1; 2; 3]; [4; 5; 6]; [7; 8; 9] ]
-        Assert.AreEqual "List.concat function" (listResult|>List.length) 9
+        QUnit.test "concat" (fun () ->
+            let listResult = List.concat [ [1; 2; 3]; [4; 5; 6]; [7; 8; 9] ]
+            QUnit.equal (listResult|>List.length) 9 "List.concat function"
+        )
 
     [<Js>]
     let reverseList list = List.fold (fun acc elem -> elem::acc) [] list
 
     [<Js>]
     let Fold() =
-        let sumList list = List.fold (fun acc elem -> acc + elem) 0 list
-        Assert.AreEqual "List.fold function: SumTest" (sumList [ 1 .. 3 ]) 6
+        QUnit.test "fold" (fun () ->
+            let sumList list = List.fold (fun acc elem -> acc + elem) 0 list
+            QUnit.equal (sumList [ 1 .. 3 ]) 6 "List.fold function: SumTest"
+        )
 
     [<Js>]
     let Fold2() =
-        let sumGreatest list1 list2 = List.fold2 (fun acc elem1 elem2 ->
-                                                      acc + max elem1 elem2) 0 list1 list2
-        let sum = sumGreatest [1; 2; 3] [3; 2; 1]
-        Assert.AreEqual "List.fold2 function" sum 8
+        QUnit.test "fold2" (fun () ->
+            let sumGreatest list1 list2 = List.fold2 (fun acc elem1 elem2 ->
+                                                          acc + max elem1 elem2) 0 list1 list2
+            let sum = sumGreatest [1; 2; 3] [3; 2; 1]
+            QUnit.equal sum 8 "List.fold2 function"
+        )
 
     // Discriminated union type that encodes the transaction type.
     type Transaction =
@@ -330,28 +399,77 @@ module ListTest =
                                         initialBalance
                                         transactionTypes
                                         transactionAmounts
-        Assert.AreEqual "List.fold2 function" (endingBalance |> int) 1205
+        QUnit.test "fold2_2" (fun () ->
+            QUnit.equal (endingBalance |> int) 1205 "List.fold2 function"
+        )
 
     [<Js>]
     let FoldBack() =
-        let sumListBack list = List.foldBack (fun acc elem -> acc + elem) list 0
-        Assert.AreEqual "List.foldBack function: Sum List" (sumListBack [1; 2; 3]) 6
+        QUnit.test "foldback" (fun () ->
+            let sumListBack list = List.foldBack (fun acc elem -> acc + elem) list 0
+            QUnit.equal (sumListBack [1; 2; 3]) 6 "List.foldBack function: Sum List"
+        )
 
     [<Js>]
     let FoldBack2() =
-        let subtractArrayBack array1 array2 = List.foldBack2 (fun elem acc1 acc2 -> elem - (acc1 - acc2)) array1 array2 0
-        let a1 = [1;2;3]
-        let a2 = [4;5;6]
-        let res = subtractArrayBack a1 a2
-        Assert.AreEqual "List.fold2 function:" res -9
+        QUnit.test "foldback2" (fun() ->
+            let subtractArrayBack array1 array2 = List.foldBack2 (fun elem acc1 acc2 -> elem - (acc1 - acc2)) array1 array2 0
+            let a1 = [1;2;3]
+            let a2 = [4;5;6]
+            let res = subtractArrayBack a1 a2
+            QUnit.equal res -9 "List.fold2 function:"
+        )
 
     [<Js>]
     let Reduce() =
-        let sumAList list =
-            try
-                List.reduce (fun acc elem -> acc + elem) list
-            with
-               | :? System.ArgumentException as exc -> 0
+        QUnit.test "reduce" (fun () ->
+            let sumAList list =
+                try
+                    List.reduce (fun acc elem -> acc + elem) list
+                with
+                   | :? System.ArgumentException as exc -> 0
 
-        let resultSum = sumAList [2; 4; 10]
-        Assert.AreEqual "List.reduce function:" resultSum 16
+            let resultSum = sumAList [2; 4; 10]
+            QUnit.equal resultSum 16 "List.reduce function:"
+        )
+
+    [<Js>]
+    let run() =
+        Declare1()
+        Declare2()
+        Declare3()
+        AttachElements()
+        ConcatenateElements()
+        Properties()
+        Recursion1()
+        Recursion2()
+        BooleanOperation()
+        Exists2()
+        ForAll()
+        ForAll2()
+        Sort()
+        SortBy()
+        Find()
+        Pick()
+        TryFind()
+        ArithemeticOperations()
+        Zip()
+        Zip3()
+        UnZip()
+        UnZip3()
+        Map()
+        Map2()
+        Map3()
+        Mapi()
+        Mapi2()
+        Collect()
+        Filter()
+        Choose()
+        Append()
+        Concat()
+        Fold()
+        Fold2()
+        Fold2_2()
+        FoldBack()
+        FoldBack2()
+        Reduce()
