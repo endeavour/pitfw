@@ -245,7 +245,7 @@ module AstParser =
                                 let x1 = if not(isOperator) then Variable(secondName) else MemberAccess(secondName, Variable("Pit.Core.Operators"))
                                 let le1 = DeclareStatement(x1, traverse y map)
                                 let right2 =
-                                    match traverse z map with
+                                    match traverse z secondMap with
                                     | Block(a) -> Block(a) |> rewriteBodyWithReturn |> wrapClosureCall // sometimes we get a full block so wrap it inside a closure function
                                     | x        -> x
                                 let le2 = DeclareStatement(vr, right2)
