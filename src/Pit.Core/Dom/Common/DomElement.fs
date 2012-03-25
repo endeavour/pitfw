@@ -153,7 +153,7 @@ type DomElement() =
     [<CompileTo("style")>]
     member x.Style
         with get() = style
-        and set(v:string) = () 
+        and set(v:DomStyle) = () 
 
     [<CompileTo("tabIndex")>]
     member x.TabIndex
