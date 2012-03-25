@@ -23,7 +23,7 @@ module TypeParser =
         // get unique namespaces
         let moduleTypes, normalTypes =
             types
-            |> Array.filter(fun t -> t.Namespace <> null && not(isJsIgnoreType t))
+            |> Array.filter(fun t -> t.Namespace <> null && not(isJsIgnoreType t) && not(getIgnoreNamespaceAttr t))
             |> Array.partition(fun t -> FSharpType.IsModule(t) || FSharpType.IsUnion(t))
 
         moduleTypes |> Seq.map(fun t -> getDeclaredTypeName(t, String.Empty))
