@@ -134,7 +134,7 @@ type DomElement =
 
     member x.Style
         with get() = x.style
-        and set(v:string) = x.htmlEl.SetProperty("tabIndex", box(v))
+        //and set(v:DomStyle) = x.htmlEl.SetProperty("style", box(v))
 
     member x.TabIndex
         with get() = x.htmlEl.GetProperty<float>("tabIndex") |> int

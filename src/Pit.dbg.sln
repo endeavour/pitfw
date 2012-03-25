@@ -7,6 +7,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Pit.Core.dbg", "Pit.Core.db
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Pit.Common.dbg", "Pit.Common\Pit.Common.dbg.fsproj", "{4A2422AA-2B1D-480E-BB07-7A1D90A5545F}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Pit.Core.Ex.dbg", "Pit.Core.Ex.dbg\Pit.Core.Ex.dbg.fsproj", "{B2D86B8D-4B12-490E-AD56-B6751BBBF5F3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,16 @@ Global
 		{4A2422AA-2B1D-480E-BB07-7A1D90A5545F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{4A2422AA-2B1D-480E-BB07-7A1D90A5545F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{4A2422AA-2B1D-480E-BB07-7A1D90A5545F}.Release|x86.ActiveCfg = Release|Any CPU
+		{B2D86B8D-4B12-490E-AD56-B6751BBBF5F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2D86B8D-4B12-490E-AD56-B6751BBBF5F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2D86B8D-4B12-490E-AD56-B6751BBBF5F3}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{B2D86B8D-4B12-490E-AD56-B6751BBBF5F3}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{B2D86B8D-4B12-490E-AD56-B6751BBBF5F3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B2D86B8D-4B12-490E-AD56-B6751BBBF5F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2D86B8D-4B12-490E-AD56-B6751BBBF5F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2D86B8D-4B12-490E-AD56-B6751BBBF5F3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{B2D86B8D-4B12-490E-AD56-B6751BBBF5F3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{B2D86B8D-4B12-490E-AD56-B6751BBBF5F3}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

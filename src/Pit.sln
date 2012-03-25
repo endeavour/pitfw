@@ -7,6 +7,14 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Pit.Common", "Pit.Common\Pi
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Pit.JQuery", "Pit.JQuery\Pit.JQuery.fsproj", "{32FB264F-02AA-4B4E-A9A2-336FADD575A3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{62C90632-8032-4147-A72A-507C0C8AD801}"
+	ProjectSection(SolutionItems) = preProject
+		..\build.fsx = ..\build.fsx
+		Scripts\Pit.js = Scripts\Pit.js
+	EndProjectSection
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Pit.Core.Ex", "Pit.Core.Ex\Pit.Core.Ex.fsproj", "{B4098448-0EA0-40E7-A399-113308C83A5C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +55,16 @@ Global
 		{32FB264F-02AA-4B4E-A9A2-336FADD575A3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{32FB264F-02AA-4B4E-A9A2-336FADD575A3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{32FB264F-02AA-4B4E-A9A2-336FADD575A3}.Release|x86.ActiveCfg = Release|Any CPU
+		{B4098448-0EA0-40E7-A399-113308C83A5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4098448-0EA0-40E7-A399-113308C83A5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4098448-0EA0-40E7-A399-113308C83A5C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{B4098448-0EA0-40E7-A399-113308C83A5C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{B4098448-0EA0-40E7-A399-113308C83A5C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B4098448-0EA0-40E7-A399-113308C83A5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4098448-0EA0-40E7-A399-113308C83A5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4098448-0EA0-40E7-A399-113308C83A5C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{B4098448-0EA0-40E7-A399-113308C83A5C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{B4098448-0EA0-40E7-A399-113308C83A5C}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
