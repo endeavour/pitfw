@@ -141,7 +141,7 @@ module ArrayTest =
         QUnit.test "exists2" (fun () ->
             let allNegative = Array.exists (fun elem -> abs (elem) = elem) >> not
             let res = allNegative [| -1; 2; -3 |]
-            QUnit.notEqual res false "Array Exists Not Equal"
+            QUnit.equal res false "Array Exists Not Equal"
         )
 
     [<Js>]
