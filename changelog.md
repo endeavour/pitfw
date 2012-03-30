@@ -1,6 +1,26 @@
 #Pit - F# to JS Compiler
 >Lets you code, debug and manage easily
 
+###Changelog v0.3 (3/26/2012)
+####Fixes
+* Closure variable when using new ctor for setting properties
+* Corrected setter for DomElement.Style
+* added jQuery code generation for tuple args as in hover function
+* removed object extensions in pit.js for isInterfaceOf,containsInterface,equality, this make it compatible to work with jquery.js file
+
+###Feature
+* Added Pit.Core.Ex project for new extensions 
+* Added QUnit support with jQuery
+* Added PitJQuery template in VSIX project
+* Changed most of the tests to QUnit
+
+###Changelog v0.2.3 (3/4/2012)
+####Fixes
+* Updated FAKE scripts
+* Added code to strip extra op_PipeRight in jQuery code generation
+* Added parser context (internal to compiler)
+* Added formatting option in build
+
 ###Changelog v0.2.2 (2/4/2012)
 ####Fixes
 * ENUM namespace/code generation issue
