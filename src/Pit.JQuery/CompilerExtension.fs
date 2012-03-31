@@ -32,6 +32,8 @@ open Pit.Compiler
                     /// removing jQuery function call to t.SomeFunction
                     | Ast.Call(Ast.Call(Ast.MemberAccess(x,Variable("jQuery")),args), [|Variable("t")|]) ->
                         Ast.Call(Ast.MemberAccess(x,Variable("t")),args) |> Some
+                    | Ast.Call(Ast.MemberAccess(x,Variable("jQuery")), [|Variable(t)|]) ->
+                        Ast.Call(Ast.MemberAccess(x,Variable(t)),[|Ast.Null|]) |> Some
                     /// for functions which accept more than 2 params
                     | Ast.Call(Ast.MemberAccess(x,Variable("jQuery")),args) when args.Length > 1 ->
                         let args1 = args |> Array.take(args.Length-1)
