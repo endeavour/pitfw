@@ -57,12 +57,12 @@
     <Content Include="htm\dom\events.htm" />
     <Content Include="htm\dom\domcore.htm" />
     <Content Include="images\Desert.jpg" />
+    <Content Include="jquery.htm" />
     <Content Include="js\jquery-1.5.1.js" />
     <Content Include="js\pit.core.js" />
     <Content Include="js\qunit-git.css" />
     <Content Include="js\qunit-git.js" />
     <Content Include="pit.js" />
-    <Content Include="qunit.htm" />
     <Content Include="Silverlight.js" />
     <Content Include="Test.htm" />
     <Content Include="htm\core\Core.htm" />

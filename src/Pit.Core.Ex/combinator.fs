@@ -21,8 +21,8 @@ open Pit.Javascript
         let rec build (tag:HtmlDef) =
             match tag with
             | Tag(name,defs)    ->
-                let attrs,tags  = defs |> Array.partition(fun t -> match t with | Attr(k,v) -> true | _ -> false)
-                let attrs       = attrs |> Array.map(fun (Attr(k,v)) -> (k,v))
+                let attrs,tags  = defs  |> Array.partition(fun t -> match t with | Attr(k,v) -> true | _ -> false)
+                let attrs       = attrs |> Array.choose(fun t -> match t with Attr(k,v) -> Some(k,v) | _ -> None)
                 /// create the element and set attributes
                 let el = document.CreateElement(name)
                 for i=0 to attrs.Length - 1 do

@@ -14,7 +14,7 @@ open Pit.Javascript.JQuery
         }
 
         [<Js>]
-        let testEnd (options:testStartOptions) = 
+        let testStart (options:testStartOptions) = 
             let el = document.GetElementById("content")
             el.InnerHTML <- ""
 
@@ -43,7 +43,7 @@ open Pit.Javascript.JQuery
                 addDiv()                
                 let divEl = document.GetElementById("divEl")
                 jQuery.ofEl(divEl)
-                |> jQuery.attr2("background","red")
+                |> jQuery.css3("background","red")
                 |> jQuery.ignore
 
                 let background = divEl.Style.Background
@@ -79,7 +79,7 @@ open Pit.Javascript.JQuery
                 |> jQuery.attr2("disabled","disabled")
                 |> jQuery.ignore
                 let disabled = jQuery.ofVal("#divEl") |> jQuery.attr("disabled")
-                QUnit.equal disabled "disabled" "jQuery Attr with Key/Value"
+                QUnit.equal disabled true "jQuery Attr with Key/Value"
             )
 
         /// Ajax functions

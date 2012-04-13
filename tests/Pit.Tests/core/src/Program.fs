@@ -11,10 +11,11 @@ open Pit.Compiler
 open Pit.Compiler.Ast
 open Pit.Compiler.AstParser
 open Pit.Javascript
-#if DOM
 open Pit.Dom
-open Pit.Dom.HtmlModule
-#endif
+open Pit.Dom.Html5
+open Pit.Test
+open Pit.Test.TestModule
+open Pit.Javascript.JQuery
 
 let getTypesFromAssembly (asm : Assembly) =
     asm.GetExportedTypes()
@@ -44,7 +45,7 @@ let genf (t: Type -> bool) (outputFile:string)=
 let genAst() =
     genAssembly (Assembly.LoadFile(System.IO.Directory.GetCurrentDirectory() + @"\Pit.Core.dll")) (fun t -> true) "pit.core.js"
 
-//genAst()
+genAst()
 
 //// generate js for the test
 let genTests() =
@@ -63,7 +64,7 @@ let genTests() =
             || t.Name.Contains("TryWithTests")
             || t.Name.Contains("OperatorOverloadTests")
             || t.Name.Contains("UOMTest")
-            || t.Name.Contains("Monads")
+            //|| t.Name.Contains("Monads")
             || t.Name.Contains("OverloadedCtorsTests")
             || t.Name.Contains("RangeEnumeratorTests"))
              "core_tests.js"
@@ -90,6 +91,12 @@ let genTests() =
             || t.Name.Contains("RegexTest")
             || t.Name.Contains("FSStringsTest"))
             "jsliterals.js"
+    genf
+        (fun t ->
+            t.Name.Contains("QUnit")
+            || t.Name.Contains("jQueryTest"))
+            "jquery.test.js"
+
 #endif
 #if DOM
     genf
@@ -109,22 +116,42 @@ let genTests() =
 #endif
     printfn "Done..."
 
-//genTests()
+genTests()
 
 //genAssembly (Assembly.LoadFile(System.IO.Directory.GetCurrentDirectory() + @"\Pit.Core.dll")) (fun t -> t.Name.Contains("Exception")) "output.js"
-genf (fun t -> t.Name.Contains("TestModule")) "output.js"
+//genf (fun t -> t.Name.Contains("jQueryTest") || t.Name.Contains("QUnit")) "output.js"
 (*let e =
     <@
-        //let r = raise(new System.InvalidOperationException("Invalid action"))
-        (*let s1 = seq { 1..10 } |> Seq.toArray
-        let s2 = seq { 10..-1..1 } |> Seq.toArray
-        let s1 = Array.ofList [2..2..8]*)
-        let s2 = Array.ofList [2..2..5]
-        let sets = seq { for i in 2 .. 5 do yield Array.ofList [ i .. i .. 5 ] } |> Seq.toArray
-
+        (*let x = ""
+        let y =
+            match x with
+            | "One" -> 1
+            | "Two" -> 2
+            //| "Three" -> 3
+            | _     -> 0*)
+        //let el = document.CreateElement("table", Style=DomStyle(Background="black",Position="absolute"))
+        //let e = TestModule.testFunction ("a","b") 10
+        //let e = TestModule.testFunction0 10 10
+        //Assert.AreEqual "Value Test" "HHH" "HHH"
+//        jQuery.ofVal("this")
+//        //|> jQuery.attr2("background","red")
+//        |> jQuery.hover( (fun _ -> 
+//            jQuery.ofVal("this") 
+//            |> jQuery.addClass("green")
+//            |> jQuery.ignore)
+//        , (fun _ -> ()) )
+//        |> ignore
+        //jQuery.ofVal("#orderedlist")
+        //|> jQuery.addClass("red")
+        //|> jQuery.ignore
+        QUnit.moduleDeclare("module1")
+        QUnit.test "First Test" (fun () ->
+            QUnit.equal 10 10 "Are equal"
+        )
         ()
     @>
 let ast = getAst e
+//printfn "%A" ast
 let js = JavaScriptWriter.getJS [|ast|]
 printfn "%A" js*)
 
