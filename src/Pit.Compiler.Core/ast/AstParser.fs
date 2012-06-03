@@ -754,9 +754,28 @@ module AstParser =
                     Assign(m, traverse c map)
                 | None -> Unit
 
-            | Patterns.NewUnionCase(i, l) ->
-                let args = getArgs l
-                New(Variable(getDeclaredTypeName(i.DeclaringType, i.Name)) , [|for a in args do yield traverse a map|])
+            | Patterns.NewUnionCase(i, l) as t ->
+                let rec identifySimpleList l =
+                    match l with
+                    | Patterns.NewUnionCase(x,[]) when x.Name = "Empty" -> true
+                    | Patterns.NewUnionCase(i,l) when l.Length > 0 ->  identifySimpleList l.[1]
+                    | _ -> false
+                if i.DeclaringType.Name = "FSharpList`1" && i.Name <> "Empty" && identifySimpleList(t) = true then
+                    let rec transform l acc =
+                        match l with
+                        | Patterns.NewUnionCase(x,[]) when x.Name = "Empty" -> acc
+                        | Patterns.NewUnionCase(i, l) when l.Length > 0 -> transform l.[1] (acc @ [l.[0]])
+                        | _ -> acc @ [l] //failwith "unrecognized list sequence"
+                    let t = transform t []                    
+                    let newArray = traverse (Expr.NewArray(t.Head.Type, t)) map
+                    (Call
+                        (MemberAccess
+                            ("OfArray",
+                            Variable "Pit.FSharp.Collections.ListModule"),
+                        [|newArray|]))
+                else
+                    let args = getArgs l
+                    New(Variable(getDeclaredTypeName(i.DeclaringType, i.Name)) , [|for a in args do yield traverse a map|])
 
             | Patterns.UnionCaseTest(expr, info) ->
                 let left = traverse expr map
