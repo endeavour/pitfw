@@ -41,7 +41,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">
-      <HintPath>..\..\..\pitdemos\repl\sl\reference\FSharp.Core.dll</HintPath>
+      <HintPath>..\..\lib\Silverlight\4.0\FSharp.Core.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System" />
@@ -52,7 +52,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="common\Ast.fs" />
     <Compile Include="common\Utils.fs" />
     <Compile Include="ast\JavaScriptWriter.fsi" />
     <Compile Include="ast\JavaScriptWriter.fs" />

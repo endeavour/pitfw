@@ -41,7 +41,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">
-      <HintPath>..\..\..\pitdemos\repl\sl\reference\FSharp.Core.dll</HintPath>
+      <HintPath>..\..\lib\Silverlight\4.0\FSharp.Core.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System" />
@@ -105,6 +105,7 @@
     <Compile Include="Dom\Html5\Canvas.fs" />
     <Compile Include="Dom\Html5\DomMedia.fs" />
     <Compile Include="Dom\HtmlModule.fs" />
+    <Compile Include="Dom\combinator.fs" />
     <Compile Include="AssemblyInfo.fs" />
   </ItemGroup>
   <ItemGroup>
