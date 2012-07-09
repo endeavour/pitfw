@@ -34,7 +34,7 @@ module Monads =
 
 module MonadsTest =
     open Monads
-    open Pit.Javascript.JQuery
+    open Pit.JavaScript.JQuery
 
     [<Js>]
     let failIfBig n = maybe {if n > 1000 then return! None else return n}

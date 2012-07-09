@@ -1,105 +1,104 @@
 ﻿namespace Pit.Test
 open Pit
 open Pit.Dom
-open Pit.Javascript.JQuery
+open Pit.JavaScript.JQuery
 
-    /// Extending QUnit for testStart and other functions
-    [<IgnoreNamespace>]
-    module QUnit =
+/// Extending QUnit for testStart and other functions
+[<IgnoreNamespace>]
+module QUnit =
         
-        [<JsObject>]
-        type testStartOptions = {
-            testName   : string
-            moduleName : string
-        }
+    [<JsObject>]
+    type testStartOptions = {
+        testName   : string
+        moduleName : string
+    }
 
-        [<Js>]
-        let testStart (options:testStartOptions) = 
-            let el = document.GetElementById("content")
-            el.InnerHTML <- ""
+    [<Js>]
+    let testStart (options:testStartOptions) = 
+        let el = document.GetElementById("content")
+        el.InnerHTML <- ""
 
-    /// http://api.jquery.com/browser/
-    module jQueryTest =
+/// http://api.jquery.com/browser/
+module jQueryTest =
+
+    [<Js>]
+    let addDiv() =
+        jQuery("<div id='divEl'><p>Hello World</p></div>")
+            .appendTo("#content")
+            .ignore()
         
-        [<Js>]
-        let addDiv() =
-            jQuery.ofVal("<div id='divEl'><p>Hello World</p></div>")
-            |> jQuery.appendTo "#content"
-            |> jQuery.ignore
-
-        
-        /// Core jQuery functions that generates $("el").css("background","red");
-        [<Js>]
-        let coreFunctions() =
-            QUnit.moduleDeclare("Core Functions")
-            QUnit.test "ofVal" (fun() ->
-                addDiv()
-                let divEl = document.GetElementById("divEl")
-                let notNull = divEl <> null
-                QUnit.equal notNull true "Div is not equal to null"
-            )
+    /// Core jQuery functions that generates $("el").css("background","red");
+    [<Js>]
+    let coreFunctions() =
+        QUnit.moduleDeclare("Core Functions")
+        QUnit.test "Create" (fun() ->
+            addDiv()
+            let divEl = document.GetElementById("divEl")
+            let notNull = divEl <> null
+            QUnit.equal notNull true "Div is not equal to null"
+        )
             
-            QUnit.test "ofEl" (fun () ->
-                addDiv()                
-                let divEl = document.GetElementById("divEl")
-                jQuery.ofEl(divEl)
-                |> jQuery.css3("background","red")
-                |> jQuery.ignore
+        QUnit.test "id" (fun () ->
+            addDiv()
+            (*jQuery.ofVal("#divEl")
+            |> jQuery.css3("border","3px solid red")
+            |> jQuery.ignore*)
 
-                let background = divEl.Style.Background
-                QUnit.equal background "red" "Div Background"
-            )
+            let divEl = document.GetElementById("divEl")
+            let border = divEl.Style.Border
+            QUnit.equal border "3px solid red" "Div Border"                
+        )
 
-            QUnit.test "id" (fun () ->
-                addDiv()
-                jQuery.ofVal("#divEl")
-                |> jQuery.css3("border","3px solid red")
-                |> jQuery.ignore
+    /// Functions with 2 or more parameters
+    [<Js>]
+    let tupleFunctions () =
+        QUnit.moduleDeclare("Tuple Functions")
+        QUnit.test "attr" (fun () ->
+            addDiv()
+            let id = jQuery("#divEl").attr("id")
+            QUnit.equal id "divEl" "jQuery Attr"
+        )
 
-                let divEl = document.GetElementById("divEl")
-                let border = divEl.Style.Border
-                QUnit.equal border "3px solid red" "Div Border"                
-            )
+        QUnit.test "set attr" (fun () ->
+            addDiv()
+            jQuery("#divEl").attr("disabled","disabled").ignore()
+            let disabled = jQuery("#divEl").attr("disabled")
+            QUnit.equal disabled true "jQuery Attr with Key/Value"
+        )
 
-        /// Functions with 2 or more parameters
-        [<Js>]
-        let tupleFunctions () =
-            QUnit.moduleDeclare("Tuple Functions")
-            QUnit.test "attr" (fun () ->
-                addDiv()
-                let id = 
-                    jQuery.ofVal("#divEl")
-                    |> jQuery.attr("id")
-                QUnit.equal id "divEl" "jQuery Attr"
-            )
-
-            QUnit.test "attr2" (fun () ->
-                addDiv()
-                jQuery.ofVal("#divEl")
-                |> jQuery.attr2("disabled","disabled")
-                |> jQuery.ignore
-                let disabled = jQuery.ofVal("#divEl") |> jQuery.attr("disabled")
-                QUnit.equal disabled true "jQuery Attr with Key/Value"
-            )
-
-        /// Ajax functions
-        [<Js>]
-        let ajaxFunctions() =
-            QUnit.moduleDeclare("AJAX")
-            QUnit.test "ajax" (fun () ->
-                QUnit.stop()
-                jQuery.ajax [|
-                    "url"       @= "test.htm"
-                    "cache"     @= false
-                    "success"   @= (fun (result:string) ->                        
-                        QUnit.notEqual result "" "jQuery AJAX response"
-                        QUnit.start()
-                    )
-                |] |> ignore
-            )
+    /// Ajax functions
+    [<Js>]
+    let ajaxFunctions() =
+        QUnit.moduleDeclare("AJAX")
+        QUnit.test "ajax" (fun () ->
+            QUnit.stop()
+            jQuery.ajax [|
+                "url"       => "test.htm"
+                "cache"     => false
+                "success"   => (fun (result:string) ->                        
+                    QUnit.notEqual result "" "jQuery AJAX response"
+                    QUnit.start()
+                )
+            |] |> ignore
+        )
             
-        [<DomEntryPoint;Js>]
-        let main() =
-            coreFunctions()
-            tupleFunctions()
-            ajaxFunctions()
+    [<DomEntryPoint;Js>]
+    let main() =
+        coreFunctions()
+        tupleFunctions()
+        ajaxFunctions()
+
+module jQueryMobileTest =
+    open Pit.JavaScript.JQuery
+    open Pit.JavaScript.JQuery.Mobile
+    
+    [<Js>]
+    let init(pageEl:jQuery) =
+        Header.Make().ToJQuery().append("<h1>Header</h1>").appendTo(pageEl).ignore()
+        Content.Make().ToJQuery().append("<h2>Content</h2>").appendTo(pageEl).ignore()
+        Footer.Make().ToJQuery().append("<h1>Footer</h1>").appendTo(pageEl).ignore()
+        pageEl
+
+    [<DomEntryPoint;Js>]
+    let main() =
+        (init (document.Body.FirstChild.ToJQuery())).trigger("pagecreate").ignore()

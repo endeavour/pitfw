@@ -5,7 +5,7 @@ namespace Pit.Dom.Tests
 namespace Pit.Test
 #endif
 open Pit
-open Pit.Javascript
+open Pit.JavaScript
 
     module JsStringTest =
         [<Js>]

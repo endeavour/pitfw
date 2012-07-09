@@ -1,6 +1,6 @@
 ﻿namespace Pit.Test
 open Pit
-open Pit.Javascript.JQuery
+open Pit.JavaScript.JQuery
 
 module RecordsTests =
 

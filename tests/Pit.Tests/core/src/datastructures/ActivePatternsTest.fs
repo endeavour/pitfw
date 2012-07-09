@@ -1,7 +1,7 @@
 ﻿namespace Pit.Test
 open Pit
-open Pit.Javascript
-open Pit.Javascript.JQuery
+open Pit.JavaScript
+open Pit.JavaScript.JQuery
 
 module ActivePatternsTest =
 
