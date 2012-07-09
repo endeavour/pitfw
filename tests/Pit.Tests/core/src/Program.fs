@@ -10,12 +10,12 @@ open Pit.Core
 open Pit.Compiler
 open Pit.Compiler.Ast
 open Pit.Compiler.AstParser
-open Pit.Javascript
+open Pit.JavaScript
 open Pit.Dom
 open Pit.Dom.Html5
 open Pit.Test
 open Pit.Test.TestModule
-open Pit.Javascript.JQuery
+open Pit.JavaScript.JQuery
 
 let getTypesFromAssembly (asm : Assembly) =
     asm.GetExportedTypes()

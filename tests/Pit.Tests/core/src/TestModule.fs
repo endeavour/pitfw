@@ -1,7 +1,7 @@
 ﻿namespace Pit.Test
 open Pit
-open Pit.Javascript
-open Pit.Javascript.JQuery
+open Pit.JavaScript
+open Pit.JavaScript.JQuery
 
 module TestModule =
     #if DOM
@@ -20,13 +20,4 @@ module TestModule =
             let el = document.QuerySelector("H")
             ()
     #endif
-    #if AST
-        [<Js>]
-        let jQueryTest() =
-            jQuery.ofVal("this")
-            |> jQuery.append("<p>Hello World</p>")
-            |> jQuery.attr3([|"width","500px";"height","500px"|])
-            |> jQuery.ignore
-            ()
-
-    #endif
+    ()
