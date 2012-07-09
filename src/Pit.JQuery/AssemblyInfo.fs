@@ -1,4 +1,4 @@
-﻿namespace Pit.Javascript.JQuery
+﻿namespace Pit.JavaScript.JQuery
 
 open System.Reflection;
 open System.Runtime.CompilerServices;

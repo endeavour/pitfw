@@ -34,11 +34,13 @@
   <Import Project="$(MSBuildExtensionsPath32)\FSharp\1.0\Microsoft.FSharp.Targets" Condition="!Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft F#\v4.0\Microsoft.FSharp.Targets" Condition=" Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
   <ItemGroup>
+    <Compile Include="jQuery\CompilerExtension.fs" />
+    <Compile Include="jQuery\JQuery.fs" />
+    <Compile Include="jQuery\JQuery.UI.fs" />
+    <Compile Include="jQuery\QUnit.fs" />
+    <Compile Include="Mobile\JQuery.Mobile.fs" />
+    <Compile Include="Mobile\UI.fs" />
     <EmbeddedResource Include="jquery-1.7.1.min.js" />
-    <Compile Include="Common.fs" />
-    <Compile Include="CompilerExtension.fs" />
-    <Compile Include="JQuery.fs" />
-    <Compile Include="QUnit.fs" />
     <Compile Include="AssemblyInfo.fs" />
   </ItemGroup>
   <ItemGroup>
