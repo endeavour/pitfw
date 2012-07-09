@@ -1,6 +1,4 @@
 ﻿namespace Pit.Dom
-
-open System
 open Pit
 
 [<AllowNullLiteral>]

@@ -47,7 +47,7 @@ type DomBody() =
 [<Alias("document");JsIgnore(IgnoreGetSet=true)>]
 [<AllowNullLiteral>]
 type DomDocument() =
-    inherit DomObject()
+    inherit DomElement()
 
     static member Of(obj : DomObject) =
         new DomDocument()

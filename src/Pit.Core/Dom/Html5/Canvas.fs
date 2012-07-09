@@ -254,13 +254,17 @@ and
     [<CompileTo("putImageData")>]
     member x.PutImageData(imageData: ImageData, dx: float, dy: float, ?dirtyX: float, ?dirtyY: float, ?dirtyWidth: float, ?dirtyHeight: float) = ()
 
-and CanvasGradient() =
+and 
+    [<JsIgnore>]
+    CanvasGradient() =
 
     [<CompileTo("addColorStop")>]
     member x.AddColorStop(offset: float, color: string) =
         ()
 
-and CanvasPattern() =
+and 
+    [<JsIgnore>]
+    CanvasPattern() =
     class
     end
 

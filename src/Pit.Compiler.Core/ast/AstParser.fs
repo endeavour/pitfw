@@ -184,7 +184,9 @@ module AstParser =
             | BitXor(l, r)                          -> bind (fun() -> BitXor(transform l, transform r)) projection
             | BitLeftShift(l, r)                    -> bind (fun() -> BitLeftShift(transform l, transform r)) projection
             | BitRightShift(l, r)                   -> bind (fun() -> BitRightShift(transform l, transform r)) projection
-            | x                                     -> fn x transform
+            | MemberAccess(l, r)                    -> bind (fun() -> MemberAccess(l, transform r)) projection
+            | NewJsType(r)                          -> bind (fun () -> NewJsType(r |> Array.map(fun (l,r) -> (l,transform r)))) projection
+            | x                                     -> bind (fun () -> fn x transform) projection
 
         transform expr
 
@@ -348,8 +350,12 @@ module AstParser =
                         Call(traverse (expr1|>Option.get) map, args1 |> Array.map(fun a -> traverse a map)) |> Some
                     | "ToString" ->
                         Call(MemberAccess("toString", traverse (expr1|>Option.get) map), [|Unit|]) |> Some
+                    | "undefined" -> getMemberAccess ("undefined", md, false) |> Some
                     | x when isIgnoreCall(md) ->
-                        Return(Block(args1 |> Array.map(fun a -> traverse a map))) |> Some
+                        match expr1 with
+                        // we have some left exp to evaluate
+                        | Some e -> traverse e map |> Some
+                        | None   -> Return(Block(args1 |> Array.map(fun a -> traverse a map))) |> Some
                     | _ -> None
                 match res with
                 | Some(r) -> r
@@ -416,44 +422,52 @@ module AstParser =
 
                             (loop expr 0 [||])
                         | _ -> [| for a in args2 -> traverse a map |]
+                    let args1 = 
+                        if isIgnoreOptionalArguments(md) |> not then args1 
+                        else 
+                            args1 
+                            |> Array.filter(fun (t:Expr) -> 
+                                match t with
+                                | Patterns.NewUnionCase(u,args) -> if u.Name = "Some" then true else false                                    
+                                | _ -> true
+                            )
                     let arguments = getArguments(definition, args1)
+                    let instrument(node:Node) =
+                        let ext =
+                            if ctx.extensions.ContainsKey(md.DeclaringType) then ctx.extensions.[md.DeclaringType] |> Some
+                            /// for pipelined methods return type would be of the same declaring type, ex: jQuery -> jQuery
+                            elif ctx.extensions.ContainsKey(md.ReturnType) then ctx.extensions.[md.ReturnType] |> Some
+                            else
+                                match getAstParserExt(md.DeclaringType) with
+                                | Some(ext) -> let tx = ext.GetParserExtension() in ctx.extensions.Add(md.DeclaringType,tx);Some(tx)
+                                | None      -> 
+                                    match getAstParserExt(md.ReturnType) with
+                                    | Some(ext) -> let tx = ext.GetParserExtension() in ctx.extensions.Add(md.ReturnType,tx);Some(tx)
+                                    | None      -> None
+                        match ext with
+                        | Some(tx) -> transformAst node tx.Projection tx.Transform
+                        | None     -> node
                     let getCallNode node =
                         if arguments.Length = 0 then
                             Call(node, [|Unit|])
                         elif Microsoft.FSharp.Reflection.FSharpType.IsModule md.DeclaringType then
-                            let instrument(node:Node) =
-                                let ext =
-                                    if ctx.extensions.ContainsKey(md.DeclaringType) then ctx.extensions.[md.DeclaringType] |> Some
-                                    /// for pipelined methods return type would be of the same declaring type, ex: jQuery -> jQuery
-                                    elif ctx.extensions.ContainsKey(md.ReturnType) then ctx.extensions.[md.ReturnType] |> Some
-                                    else
-                                        match getAstParserExt(md.DeclaringType) with
-                                        | Some(ext) -> let tx = ext.GetParserExtension() in ctx.extensions.Add(md.DeclaringType,tx);Some(tx)
-                                        | None      -> 
-                                            match getAstParserExt(md.ReturnType) with
-                                            | Some(ext) -> let tx = ext.GetParserExtension() in ctx.extensions.Add(md.ReturnType,tx);Some(tx)
-                                            | None      -> None
-                                match ext with
-                                | Some(tx) -> transformAst node tx.Projection tx.Transform
-                                | None     -> node
-                            let callNode =
-                                match md with
-                                | x when not(isIgnoreTupleArgs md) && not(isJsExtensionType md) ->
-                                    let temp = ref node
-                                    for a in arguments do
-                                        temp := Call(temp.Value, [|a|])
-                                    temp.Value
-                                | x when isJsExtensionType(md) && arguments.Length > 0 ->
-                                    // example extension types for Dom types or for types which only require
-                                    // to generate JS properly
-                                    let extType   = arguments.[0] // first argument will always be the object itself in extension types
-                                    let arguments = arguments |> Array.skip(1)
-                                    Call(MemberAccessNode(node,extType), arguments)
-                                | _ -> Call(node, arguments)
+                            match md with
+                            | x when not(isIgnoreTupleArgs md) && not(isJsExtensionType md) ->
+                                let temp = ref node
+                                for a in arguments do
+                                    temp := Call(temp.Value, [|a|])
+                                temp.Value
+                            | x when isJsExtensionType(md) && arguments.Length > 0 ->
+                                // example extension types for Dom types or for types which only require
+                                // to generate JS properly
+                                let extType   = arguments.[0] // first argument will always be the object itself in extension types
+                                let arguments = arguments |> Array.skip(1)
+                                Call(MemberAccessNode(node,extType), arguments)
+                            | _ -> Call(node, arguments)
                                     (*match getCompilationArgumentsAttr(md) with
                                     | Some(attr) when isIgnoreTupleArgs(md) -> getCompilationCall node arguments (attr.Counts |> Seq.toList)
                                     | _ -> Call(node, arguments)*)
-                            callNode |> instrument
+                            |> instrument
                         else
                             match getCompilationArgumentsAttr(md) with
                             | Some(attr) ->
@@ -461,7 +475,7 @@ module AstParser =
                                 for a in arguments do
                                     temp := Call(temp.Value, [|a|])
                                 temp.Value
-                            | _ -> Call(node, arguments)
+                            | _ -> Call(node, arguments) |> instrument
 
                     match expr1 with
                     | Some expr ->
@@ -516,11 +530,21 @@ module AstParser =
                     traverse args.Head map
                 | j ->
                     let ctor =
-                        i.DeclaringType.GetConstructors()
-                        |> Array.filter(fun c -> c.DeclaringType = i.DeclaringType) // requiring only the current type
+                        i.DeclaringType.GetConstructors(BindingFlags.NonPublic ||| BindingFlags.Public ||| BindingFlags.Instance)
+                        |> Array.filter(fun c -> c.DeclaringType.Name = i.DeclaringType.Name) // requiring only the current type
                         |> Array.toList
                     let defCtor, ctors = ctor.Head, ctor.Tail
                     let ar = [|for a in args do yield traverse a map|]
+                    let instrument(node:Node) =
+                        let ext =
+                            if ctx.extensions.ContainsKey(i.DeclaringType) then ctx.extensions.[i.DeclaringType] |> Some
+                            else
+                                match getAstParserExt(i.DeclaringType) with
+                                | Some(ext) -> let tx = ext.GetParserExtension() in ctx.extensions.Add(i.DeclaringType,tx);Some(tx)
+                                | None      -> None
+                        match ext with
+                        | Some(tx) -> transformAst node tx.Projection tx.Transform
+                        | None     -> node
                     if i = defCtor || isJsIgnoreType(i.DeclaringType) then // if the type is declared as JsIgnore it means we dont handle custom ctor generation
                         let mi = getMemberAccess (i.DeclaringType.Name, i.DeclaringType, true)
                         match mi with
@@ -531,6 +555,7 @@ module AstParser =
                                 //New(MemberAccess(name, Variable(i.DeclaringType.Namespace)), ar)
                                 New(getDeclaredTypeName(i.DeclaringType, "") |> Variable, ar)
                         | _ -> New(mi, ar)
+                        |> instrument
                     else
                         let getIndex (c:ConstructorInfo list) ctor =
                             let rec find c i =
@@ -541,6 +566,7 @@ module AstParser =
                         let idx  = getIndex ctors i
                         let mi   = getDeclaredTypeName(i.DeclaringType,"") |> Variable
                         Call(IndexAccess(MemberAccess("ctors", mi), Variable(idx.ToString())), ar)
+                        |> instrument
 
             | Patterns.NewRecord(i, args) ->
                 if not(isJsObject(i)) then
@@ -741,8 +767,8 @@ module AstParser =
             | Patterns.FieldGet(l,i) ->
                 match l with
                 | Some(f) ->
-                    //let left = traverse f
-                    let left = Variable("this")
+                    let left = traverse f map
+                    //let left = Variable("this")
                     MemberAccess(i.Name |> cleanName, left)
                 | None -> getMemberAccess (i.Name, i.DeclaringType, true)
 

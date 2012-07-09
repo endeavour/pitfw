@@ -92,6 +92,7 @@
     <Compile Include="Dom\Html5\DomMedia.fs" />
     <Compile Include="Dom\Html5\WebSocket.fs" />
     <Compile Include="Dom\HtmlModule.fs" />
+    <Compile Include="Dom\combinator.fs" />
     <Compile Include="AssemblyInfo.fs" />
   </ItemGroup>
   <ItemGroup>

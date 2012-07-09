@@ -64,9 +64,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Pit.Core.Ex\combinator.fs">
-      <Link>combinator.fs</Link>
-    </Compile>
     <Compile Include="..\Pit.Core.Ex\Observable.fs">
       <Link>Observable.fs</Link>
     </Compile>

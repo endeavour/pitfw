@@ -2,12 +2,13 @@
 
 open System
 open Pit
-open Pit.Javascript
+open Pit.JavaScript
 
 [<Alias("navigator");JsIgnoreAttribute(IgnoreGetSet=true)>]
 [<AllowNullLiteral>]
 type DomNavigator() =
 
+    [<JsIgnore(IgnoreCall=true)>]
     static member Of() =
         new DomNavigator()
 
@@ -78,9 +79,9 @@ type DomScreen() =
 [<AllowNullLiteral>]
 type DomHistory() =
 
+    [<JsIgnore(IgnoreCall=true)>]
     static member Of() =
         new DomHistory()
-
 
     [<CompileTo("length")>]
     member x.Length
@@ -101,7 +102,8 @@ type DomHistory() =
 [<Alias("location");JsIgnoreAttribute(IgnoreGetSet=true)>]
 [<AllowNullLiteral>]
 type DomLocation() =
-
+    
+    [<JsIgnore(IgnoreCall=true)>]
     static member Of() =
         new DomLocation()
 
@@ -153,6 +155,7 @@ type DomLocation() =
 type DomFrame() =
     inherit DomElement()
 
+    [<JsIgnore(IgnoreCall=true)>]
     static member Of() =
         new DomFrame()
 
@@ -225,6 +228,7 @@ and
     DomWindow() =
     inherit DomObject()
 
+    [<JsIgnore(IgnoreCall=true)>]
     static member Of() =
         new DomWindow()
 

@@ -223,7 +223,7 @@ module TypeParser =
             let imembers = imembers |> Array.concat
 
             // ctors
-            let ctors = t.GetConstructors() |> Array.toList
+            let ctors = t.GetConstructors(BindingFlags.NonPublic ||| BindingFlags.Public ||| BindingFlags.Instance) |> Array.toList
             let defCtor = if ctors.Length > 0 then Some(ctors.Head) else None
             let ctorParameters = if defCtor.IsSome then [|for p in defCtor.Value.GetParameters() do yield Variable(p.Name)|] else [||]
             let ctorsAst =
@@ -322,6 +322,8 @@ module TypeParser =
                         | Function(None, args, b) when m.Name.Contains("|") -> // active pattern support
                             let name = m.Name.Replace("|", "")
                             Assign(MemberAccess(name, Variable(moduleName)), Function(None, args, b))
+                        | Closure(Function(None,args,b)) | Function(None, args, b) when isEntryPointMethod(m) = true ->                            
+                            Block[|Call(Function (None, [||], b),[||])|]
                         | x ->
                             let mi = MemberAccess(m.Name, Variable(moduleName))
                             Assign(mi, x)
@@ -433,7 +435,7 @@ module TypeParser =
             // Important point, don't append nestedtypes, since we evaluate the whole Union case expression including the nested types
             [|uType; imembers; unions; propNodes; methods|] |> Array.concat
 
-    let getAstFromType (mo:System.Type) =
+    let getAstFromType (ty:System.Type) =
         let rec loop (t:Type) =
             if t.BaseType = typeof<Enum> then
                 let values = Enum.GetValues(t) :?> int[]
@@ -458,13 +460,12 @@ module TypeParser =
                 let nestedTypes = [|for ty in getNestedTypes t do yield! loop ty |]
                 Class.getAst t nestedTypes
 
-        loop mo
+        loop ty
 
     let getAst(types : System.Type[]) =
         let fty = getAllFilteredTypes types
         let namespaces = getNamespaces fty
-        [| for t in fty do
-            yield getAstFromType t
-        |]
+        fty
+        |> Array.map getAstFromType
         |> Array.append [|namespaces|]
         |> Array.concat

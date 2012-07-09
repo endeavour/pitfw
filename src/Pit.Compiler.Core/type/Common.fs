@@ -195,6 +195,7 @@ open System.Reflection
                     | Variable(_) | MemberAccess(_,_) -> astNode
                     | _ -> MemberAccess(identifier, fn var)
                 | Variable("thisObject") -> MemberAccess("x", Variable("thisObject"))
+                | Variable("this") -> MemberAccess("x", Variable("this"))
                 | x -> x
 
             let projection (astNode:Node) (fn: Node->Node) =

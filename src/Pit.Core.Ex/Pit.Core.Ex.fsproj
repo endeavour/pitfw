@@ -50,7 +50,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="combinator.fs" />
     <Compile Include="Observable.fs" />
     <Compile Include="AssemblyInfo.fs" />
   </ItemGroup>

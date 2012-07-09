@@ -101,6 +101,11 @@ module Utils =
         | Some(js) -> js.IgnoreItemAccess
         | _        -> false
 
+    let isIgnoreOptionalArguments (md:MemberInfo) =
+        match getJsIgnoreAttr(md) with
+        | Some(js) -> js.IgnoreOptionalArguments
+        | _        -> false
+
     let getIsUnionCaseNullary (t:Type) =
         let attr = t.GetCustomAttributes(typeof<CompilationRepresentationAttribute>, false)
         if attr.Length > 0 then
@@ -238,7 +243,7 @@ module Utils =
         if t <> null then
             match t.MemberType with
             | MemberTypes.Property ->
-                let p = t :?> System.Reflection.PropertyInfo
+                let p = t :?> System.Reflection.PropertyInfo                
                 getMemberAccess3(name, p.PropertyType, p)
             | MemberTypes.Method ->
                 let m = t :?>  System.Reflection.MethodInfo
@@ -391,6 +396,10 @@ module AstHelpers =
 
     let isDomEntryMethod (m:MethodInfo) =
         let c = m.GetCustomAttributes(typeof<DomEntryPointAttribute>, false)
+        c <> null && c.Length = 1
+
+    let isEntryPointMethod (m:MethodInfo) =
+        let c = m.GetCustomAttributes(typeof<JsEntryPointAttribute>,false)
         c <> null && c.Length = 1
 
     let parseRec args =
