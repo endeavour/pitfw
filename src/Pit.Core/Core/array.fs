@@ -1,6 +1,6 @@
 ﻿namespace Pit.FSharp.Collections
 open Pit
-open Pit.Javascript
+open Pit.JavaScript
 open System
 
 module ArrayModule =

@@ -44,6 +44,7 @@ type JsIgnoreAttribute() =
     let mutable ignoreTypeName  = false
     let mutable ignoreItemAccess = false
     let mutable ignorePipeline  = false
+    let mutable ignoreOptionalArguments = false
 
     member x.IgnoreNamespace
         with get() = ignoreNamespace
@@ -80,6 +81,10 @@ type JsIgnoreAttribute() =
         with get() = ignorePipeline
         and set(v) = ignorePipeline <- v
 
+    member x.IgnoreOptionalArguments
+        with get() = ignoreOptionalArguments
+        and set(v) = ignoreOptionalArguments <- v
+
 [<AttributeUsage(AttributeTargets.Method)>]
 type DomEntryPointAttribute() =
     inherit Attribute()
@@ -98,4 +103,12 @@ type JsOverloadMember = CompileToAttribute
 
 [<AttributeUsage(AttributeTargets.Class ||| AttributeTargets.Module)>]
 type IgnoreNamespaceAttribute() =
+    inherit Attribute()
+
+[<AttributeUsage(AttributeTargets.Method)>]
+type JsEntryPointAttribute() =
+    inherit Attribute()
+
+[<AttributeUsage(AttributeTargets.Method)>]
+type JsKeywordAttribute() =
     inherit Attribute()

@@ -1,7 +1,7 @@
 ﻿namespace Pit
 
     module JsCommon =
-        open Pit.Javascript
+        open Pit.JavaScript
 
         //let CallLambda fs index arg1 arg2 = ()
         let invokeEvent (evts:JsArray<obj>) (index:int) arg1 arg2 = ()
@@ -14,7 +14,7 @@ namespace Pit.FSharp.Control
 open System
 open Pit
 open Pit.JsCommon
-open Pit.Javascript
+open Pit.JavaScript
 
     [<AutoOpen>]
     module CommonExtensions =

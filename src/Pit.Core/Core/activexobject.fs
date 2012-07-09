@@ -1,4 +1,4 @@
-﻿namespace Pit.Javascript
+﻿namespace Pit.JavaScript
 open Pit
 
     [<JsIgnore(IgnoreNamespace=true);AllowNullLiteral>]

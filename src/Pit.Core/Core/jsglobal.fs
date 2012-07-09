@@ -1,4 +1,4 @@
-﻿namespace Pit.Javascript
+﻿namespace Pit.JavaScript
 
 open Pit
 
@@ -6,7 +6,7 @@ open Pit
 module Global =
 
     [<CompileTo("undefined")>]
-    let undefined = "undefined"
+    let undefined() = Unchecked.defaultof<_>
 
     [<CompileTo("isNan")>]
     let isNan(v : float) = true

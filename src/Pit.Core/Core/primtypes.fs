@@ -1,7 +1,7 @@
 ﻿#nowarn "42"
 namespace Pit.FSharp.Core
 open Pit
-open Pit.Javascript
+open Pit.JavaScript
 open System.Collections
 open System.Collections.Generic
 

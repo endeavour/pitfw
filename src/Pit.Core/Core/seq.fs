@@ -1,7 +1,7 @@
 ﻿#nowarn "42"
 namespace Pit.FSharp.Collections
 open Pit
-open Pit.Javascript
+open Pit.JavaScript
 open System.Collections
 open System.Collections.Generic
 
@@ -918,7 +918,7 @@ namespace Pit.FSharp.Collections
     open Pit
     open System.Collections
     open System.Collections.Generic
-    open Pit.Javascript
+    open Pit.JavaScript
 
     module SeqModule =
         open Pit.FSharp.Core.CompilerServices.RuntimeHelpers

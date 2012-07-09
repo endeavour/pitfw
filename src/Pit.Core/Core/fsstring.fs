@@ -1,6 +1,6 @@
 ﻿namespace Pit.Text
 open Pit
-open Pit.Javascript
+open Pit.JavaScript
 
     type StringBuilder[<Js>]() =
         let array = new JsArray<obj>([||])
@@ -15,7 +15,7 @@ open Pit.Javascript
 
 namespace Pit.FSharp.Core
 open Pit
-open Pit.Javascript
+open Pit.JavaScript
     module StringModule =
 
         [<Js>]
