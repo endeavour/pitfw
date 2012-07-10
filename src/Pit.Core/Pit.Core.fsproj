@@ -64,6 +64,7 @@
     <Compile Include="Dom\Common\DomObject.fs" />
     <Compile Include="Dom\Common\DomElement.fs" />
     <Compile Include="Dom\Common\Event.fs" />
+    <Compile Include="Dom\Common\DomEvent.fs" />
     <Compile Include="Dom\Elements\DomAnchor.fs" />
     <Compile Include="Dom\Elements\DomArea.fs" />
     <Compile Include="Dom\Elements\DomBase.fs" />

@@ -94,7 +94,7 @@ and ListEnumerator<'T> [<Js>](s:'T list) =
 
     interface System.IDisposable with
         [<Js>]
-        member x.Dispose() = ()
+        member this.Dispose() = ()
 
 
 module ListModule =

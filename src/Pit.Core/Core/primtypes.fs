@@ -139,16 +139,16 @@ module Operators =
     type mkSeq<'U> [<Js>](f) =
         interface IEnumerable<'U> with
             [<Js>]
-            member x.GetEnumerator() = f()
+            member this.GetEnumerator() = f()
         interface IEnumerable with
             [<Js>]
-            member x.GetEnumerator() = (f() :> IEnumerator)
+            member this.GetEnumerator() = (f() :> IEnumerator)
 
     type RangeEnumerator [<Js>](start:int, step:int, endto:int) =
         let mutable curr = start - step
 
         [<Js>]
-        member x.Get() = curr
+        member this.Get() = curr
             (*if curr <> (endto+step) then
                 curr
             else
@@ -319,12 +319,12 @@ namespace Pit.FSharp.Control
             let mutable value: 'T       = Unchecked.defaultof<'T>
 
             [<Js>]
-            member x.IsValueCreated
+            member this.IsValueCreated
                 with get() = isValueCreated
                 and set(v) = isValueCreated <- v
 
             [<Js>]
-            member x.Value
+            member this.Value
                 with get() =
                     if not(isValueCreated) then raise (new System.InvalidOperationException("Value not created"))
                     value
@@ -337,10 +337,10 @@ namespace Pit.FSharp.Control
                 value
 
             [<Js>]
-            member x.IsDelayed = not(x.IsValueCreated)
+            member this.IsDelayed = not(this.IsValueCreated)
 
             [<Js>]
-            member x.IsForced = x.IsValueCreated
+            member this.IsForced = this.IsValueCreated
 
             [<CompiledName("Create")>] // give the extension member a 'nice', unmangled compiled name, unique within this module
             [<Js>]

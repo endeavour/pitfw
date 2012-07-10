@@ -3,7 +3,7 @@ registerNamespace("Pit.FSharp.Core");
 registerNamespace("Pit.FSharp.Collections");
 registerNamespace("Pit.Text");
 registerNamespace("Pit.FSharp.Control");
-registerNamespace("Pit.Dom.Html5");
+registerNamespace("Pit.Dom");
 registerNamespace("Pit.FSharp.Core.FSharpChoice2");
 registerNamespace("Pit.FSharp.Core.FSharpChoice3");
 registerNamespace("Pit.FSharp.Core.FSharpChoice4");
@@ -13,6 +13,8 @@ registerNamespace("Pit.FSharp.Core.FSharpChoice7");
 registerNamespace("Pit.FSharp.Core.FSharpOption1");
 registerNamespace("Pit.FSharp.Collections.SetTree1");
 registerNamespace("Pit.FSharp.Collections.FSharpList1");
+registerNamespace("Pit.Dom.Html");
+registerNamespace("Pit.Dom.DomExtensions");
 registerNamespace("Pit.Dom.Event");
 registerNamespace("Pit.FSharp.Control.ObservableModule");
 registerNamespace("Pit.FSharp.Control.EventModule");
@@ -40,7 +42,7 @@ Pit.Exception = (function() {
         return this.message;
     };
     Exception.prototype.get_Message = function() {
-        return x.get_message();
+        return this.get_message();
     };
     return Exception;
 })();
@@ -64,7 +66,7 @@ Pit.ArgumentException = (function() {
         return this.message;
     };
     ArgumentException.prototype.get_Message = function() {
-        return x.get_message();
+        return this.get_message();
     };
     return ArgumentException;
 })();
@@ -88,7 +90,7 @@ Pit.InvalidOperationException = (function() {
         return this.message;
     };
     InvalidOperationException.prototype.get_Message = function() {
-        return x.get_message();
+        return this.get_message();
     };
     return InvalidOperationException;
 })();
@@ -112,7 +114,7 @@ Pit.NotSupportedException = (function() {
         return this.message;
     };
     NotSupportedException.prototype.get_Message = function() {
-        return x.get_message();
+        return this.get_message();
     };
     return NotSupportedException;
 })();
@@ -1767,13 +1769,167 @@ Pit.FSharp.Control.FSharpEvent1 = (function() {
     };
     return FSharpEvent1;
 })();
-Pit.Dom.Html5.CanvasGradient = (function() {
-    function CanvasGradient() {}
-    return CanvasGradient;
-})();
-Pit.Dom.Html5.CanvasPattern = (function() {
-    function CanvasPattern() {}
-    return CanvasPattern;
+registerNamespace("Pit.Dom.Html.HtmlDef");
+Pit.Dom.Html.HtmlDef = function() {
+    this.IsElement = false;
+    this.IsTag = false;
+    this.IsAttr = false;
+};
+Pit.Dom.Html.HtmlDef.Attr = function(item1, item2) {
+    this.Item1 = item1;
+    this.Item2 = item2;
+};
+Pit.Dom.Html.HtmlDef.Attr.prototype = new Pit.Dom.Html.HtmlDef();
+Pit.Dom.Html.HtmlDef.Attr.prototype.equality = function(compareTo) {
+    var result = true;
+    result = result && this.get_Item1() == compareTo.get_Item1();
+    result = result && this.get_Item2() == compareTo.get_Item2();
+    return result;
+};
+Pit.Dom.Html.HtmlDef.Attr.prototype.get_Item1 = function() {
+    return this.Item1;
+};
+Pit.Dom.Html.HtmlDef.Attr.prototype.get_Item2 = function() {
+    return this.Item2;
+};
+Pit.Dom.Html.HtmlDef.Tag = function(item1, item2) {
+    this.Item1 = item1;
+    this.Item2 = item2;
+};
+Pit.Dom.Html.HtmlDef.Tag.prototype = new Pit.Dom.Html.HtmlDef();
+Pit.Dom.Html.HtmlDef.Tag.prototype.equality = function(compareTo) {
+    var result = true;
+    result = result && this.get_Item1() == compareTo.get_Item1();
+    result = result && this.get_Item2() == compareTo.get_Item2();
+    return result;
+};
+Pit.Dom.Html.HtmlDef.Tag.prototype.get_Item1 = function() {
+    return this.Item1;
+};
+Pit.Dom.Html.HtmlDef.Tag.prototype.get_Item2 = function() {
+    return this.Item2;
+};
+Pit.Dom.Html.HtmlDef.Element = function(item) {
+    this.Item = item;
+};
+Pit.Dom.Html.HtmlDef.Element.prototype = new Pit.Dom.Html.HtmlDef();
+Pit.Dom.Html.HtmlDef.Element.prototype.equality = function(compareTo) {
+    var result = true;
+    result = result && this.get_Item() == compareTo.get_Item();
+    return result;
+};
+Pit.Dom.Html.HtmlDef.Element.prototype.get_Item = function() {
+    return this.Item;
+};
+Pit.Dom.Html.HtmlDef.prototype.get_IsElement = function() {
+    return this instanceof Pit.Dom.Html.HtmlDef.Element;
+};
+Pit.Dom.Html.HtmlDef.prototype.get_IsTag = function() {
+    return this instanceof Pit.Dom.Html.HtmlDef.Tag;
+};
+Pit.Dom.Html.HtmlDef.prototype.get_IsAttr = function() {
+    return this instanceof Pit.Dom.Html.HtmlDef.Attr;
+};
+Pit.Dom.Html.op_AtEquals = function(p) {
+    return function(v) {
+        return new Pit.Dom.Html.HtmlDef.Attr(p, v);
+    };
+};
+Pit.Dom.Html.attr = function(tupledArg) {
+    var p = tupledArg.Item1;
+    var v = tupledArg.Item2;
+    return new Pit.Dom.Html.HtmlDef.Attr(p, v);
+};
+Pit.Dom.Html.tag = function(name) {
+    return function(attr) {
+        return new Pit.Dom.Html.HtmlDef.Tag(name, attr);
+    };
+};
+Pit.Dom.Html.el = function(dom) {
+    return new Pit.Dom.Html.HtmlDef.Element(dom);
+};
+Pit.Dom.Html.make = function(tag) {
+    var build = function(tag1) {
+            return (function(thisObject) {
+                if (tag1 instanceof Pit.Dom.Html.HtmlDef.Element) {
+                    var el = tag1.get_Item();
+                    return el;
+                } else if (tag1 instanceof Pit.Dom.Html.HtmlDef.Attr) {
+                    var value = tag1.get_Item2();
+                    var key = tag1.get_Item1();
+                    throw "Unrecognized sequence";
+                } else {
+                    var name = tag1.get_Item1();
+                    var defs = tag1.get_Item2();
+                    var patternInput = Pit.FSharp.Core.Operators.op_PipeRight(defs)((function(array) {
+                        return Pit.FSharp.Collections.ArrayModule.Partition(function(t) {
+                            return (function(thisObject) {
+                                if (t instanceof Pit.Dom.Html.HtmlDef.Attr) {
+                                    var v = t.get_Item2();
+                                    var k = t.get_Item1();
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            })(thisObject);
+                        })(array);
+                    }));
+                    var tags = patternInput.Item2;
+                    var attrs = patternInput.Item1;
+                    var attrs1 = Pit.FSharp.Core.Operators.op_PipeRight(attrs)((function(array) {
+                        return Pit.FSharp.Collections.ArrayModule.Map(function(t) {
+                            return (function(thisObject) {
+                                if (t instanceof Pit.Dom.Html.HtmlDef.Attr) {
+                                    var v = t.get_Item2();
+                                    var k = t.get_Item1();
+                                    return {
+                                        Item1: k,
+                                        Item2: v
+                                    };
+                                } else {
+                                    throw "Unknown sequence"
+                                }
+                            })(thisObject);
+                        })(array);
+                    }));
+                    var el = document.createElement(name);
+                    for (var i = 0; i <= (attrs1.get_Length() - 1); i++) {
+                        (function(thisObject, i) {
+                            var patternInput1 = attrs1[i];
+                            var v = patternInput1.Item2;
+                            var k = patternInput1.Item1;
+                            (function(thisObject) {
+                                if (k == '') {
+                                    throw "No attribute key defined"
+                                } else {
+                                    return null;
+                                }
+                            })(thisObject);
+                            (function(thisObject) {
+                                if (k.ToLower() != "innerhtml") {
+                                    return el.setAttribute(k, v.toString());
+                                } else {
+                                    return el.innerHTML = v.toString();
+                                }
+                            })(thisObject);
+                        })(thisObject, i);
+                    };
+                    for (var i = 0; i <= (tags.get_Length() - 1); i++) {
+                        (function(thisObject, i) {
+                            var tag12 = tags[i];
+                            var tagEl = build(tag12);
+                            el.appendChild(tagEl);
+                        })(thisObject, i);
+                    };
+                    return el;
+                }
+            })(this);
+        };
+    return build(tag);
+};
+Pit.Dom.Html.HtmlDef.Tags = (function() {
+    function Tags() {}
+    return Tags;
 })();
 Pit.Dom.Event.click = function(el) {
     var evt = new Pit.FSharp.Control.UIEvent1("click", el);
@@ -4197,7 +4353,7 @@ Pit.FSharp.Core.CompilerServices.RuntimeHelpers.FinallyEnumerable1 = (function()
                 this.x = thisObject;
             }
             IEnumerable.prototype.GetEnumerator = function() {
-                return x.IEnumerable1_GetEnumerator();
+                return this.x.IEnumerable1_GetEnumerator();
             };
             return IEnumerable;
         })();
@@ -4803,7 +4959,7 @@ Pit.FSharp.Collections.Generator.GenerateThen1 = (function() {
                         return res;
                     } else if (matchValue instanceof Pit.FSharp.Collections.Generator.Step1.Goto) {
                         var next = matchValue.get_Item();
-                        return new Pit.FSharp.Collections.Generator.Step1.Goto(Pit.FSharp.Collections.Generator.GenerateThen1({
+                        return new Pit.FSharp.Collections.Generator.Step1.Goto(Pit.FSharp.Collections.Generator.GenerateThen1.Bind({
                             Item1: next,
                             Item2: thisObject.x.cont
                         }));
@@ -11122,7 +11278,7 @@ Pit.FSharp.Collections.SetTreeModule.collapseLHS = function(stack) {
     })(this);
 };
 Pit.FSharp.Collections.SetTreeModule.mkIterator = function(s) {
-    return new Pit.FSharp.Collections.SetTreeModule.SetIterator1(Pit.FSharp.Collections.SetTreeModule.collapseLHS(new Pit.FSharp.Collections.FSharpList1.Cons(s, new Pit.FSharp.Collections.FSharpList1.Empty())), false);
+    return new Pit.FSharp.Collections.SetTreeModule.SetIterator1(Pit.FSharp.Collections.SetTreeModule.collapseLHS(Pit.FSharp.Collections.ListModule.OfArray([s])), false);
 };
 Pit.FSharp.Collections.SetTreeModule.notStarted = (function() {
     throw Pit.InvalidOperationException.ctors[0]("Enumeration Not Started");
@@ -11348,7 +11504,7 @@ Pit.FSharp.Collections.SetTreeModule.compare = function(comparer) {
                 } else if (matchValue.Item2 instanceof Pit.FSharp.Collections.SetTree1.SetEmpty) {
                     return 1;
                 } else {
-                    return Pit.FSharp.Collections.SetTreeModule.compareStacks(comparer)(new Pit.FSharp.Collections.FSharpList1.Cons(s1, new Pit.FSharp.Collections.FSharpList1.Empty()))(new Pit.FSharp.Collections.FSharpList1.Cons(s2, new Pit.FSharp.Collections.FSharpList1.Empty()));
+                    return Pit.FSharp.Collections.SetTreeModule.compareStacks(comparer)(Pit.FSharp.Collections.ListModule.OfArray([s1]))(Pit.FSharp.Collections.ListModule.OfArray([s2]));
                 }
             })(this);
         };
@@ -11394,10 +11550,10 @@ Pit.FSharp.Control.LazyExtensions.Lazy1 = (function() {
         return this.value;
     };
     Lazy1.prototype.get_IsDelayed = (function() {
-        return !x.get_IsValueCreated();
+        return !this.get_IsValueCreated();
     });
     Lazy1.prototype.get_IsForced = function() {
-        return x.get_IsValueCreated();
+        return this.get_IsValueCreated();
     };
     return Lazy1;
 })();
@@ -11602,7 +11758,7 @@ Pit.FSharp.Core.OptionModule.ToList = function(option) {
     return (function(thisObject) {
         if (option instanceof Pit.FSharp.Core.FSharpOption1.Some) {
             var x = option.get_Value();
-            return new Pit.FSharp.Collections.FSharpList1.Cons(x, new Pit.FSharp.Collections.FSharpList1.Empty());
+            return Pit.FSharp.Collections.ListModule.OfArray([x]);
         } else {
             return new Pit.FSharp.Collections.FSharpList1.Empty();
         }

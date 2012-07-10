@@ -22,11 +22,11 @@ open Pit.JavaScript
         type BasicObserver<'T> [<Js>](f: 'T -> unit) =
             interface IObserver<'T> with
                 [<Js>]
-                member x.OnNext(args) = f args
+                member this.OnNext(args) = f args
                 [<Js>]
-                member x.OnError(e)   = ()
+                member this.OnError(e)   = ()
                 [<Js>]
-                member x.OnCompleted() = ()
+                member this.OnCompleted() = ()
 
         type IObservable<'Args> with
 
@@ -42,7 +42,7 @@ open Pit.JavaScript
     type BasicDisposable [<Js>](f: unit -> unit) =
         interface IDisposable with
             [<Js>]
-            member x.Dispose() =
+            member this.Dispose() =
                 f()
 
     type EventPublish2<'Delegate,'Args when 'Delegate : delegate<'Args,unit> and 'Delegate :> System.Delegate > [<Js>](eventFuncs: JsArray<obj>) =

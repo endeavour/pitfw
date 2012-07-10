@@ -10,17 +10,17 @@ open System
 
             interface IObserver<'T> with
                 [<Js>]
-                member x.OnNext(args) = next args
+                member this.OnNext(args) = next args
                 [<Js>]
-                member x.OnError(e)   = error(e)
+                member this.OnError(e)   = error(e)
                 [<Js>]
-                member x.OnCompleted() = completed()
+                member this.OnCompleted() = completed()
 
         type BasicObservable<'T> [<Js>](f: IObserver<'T> -> IDisposable) =
 
             interface IObservable<'T> with
                 [<Js>]
-                member x.Subscribe(observer: IObserver<'T>) = f(observer)
+                member this.Subscribe(observer: IObserver<'T>) = f(observer)
 
         [<Js>]
         let mkObservable (f: IObserver<'T> -> IDisposable) = new BasicObservable<_>(f) :> IObservable<_>

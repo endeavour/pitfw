@@ -6,20 +6,20 @@ registerNamespace("Pit.Test.JsStringTest");
 registerNamespace("Pit.Test.JsArrayTest");
 registerNamespace("Pit.Test.DateTest");
 Pit.Test.FSStringsTest.Collect = function() {
-    var spaceOut = function(input) {
-            return Pit.FSharp.Core.StringModule.Collect(function(c) {
-                return (c.ToString() + " ");
-            })(input);
-        };
+    var spaceOut = (function(input) {
+        return Pit.FSharp.Core.StringModule.Collect((function(c) {
+            return (c.toString() + " ");
+        }))(input);
+    });
     var res = spaceOut("Hi");
     return Assert.AreEqual("StringModule Collect", "H i ", res);
 };
 Pit.Test.FSStringsTest.Exists = function() {
     var containsUpperCase = function(str) {
             return (function(thisObject) {
-                if (Pit.FSharp.Core.StringModule.Exists(function(c) {
+                if (Pit.FSharp.Core.StringModule.Exists((function(c) {
                     return c == "e";
-                })(str)) {
+                }))(str)) {
                     return true;
                 } else {
                     return false;
@@ -32,9 +32,9 @@ Pit.Test.FSStringsTest.Exists = function() {
 Pit.Test.FSStringsTest.ForAll = function() {
     var isAllS = function(str) {
             return (function(thisObject) {
-                if (Pit.FSharp.Core.StringModule.ForAll(function(c) {
+                if (Pit.FSharp.Core.StringModule.ForAll((function(c) {
                     return c == "s";
-                })(str)) {
+                }))(str)) {
                     return true;
                 } else {
                     return false;
@@ -47,53 +47,53 @@ Pit.Test.FSStringsTest.ForAll = function() {
     return Assert.AreEqual("StringModule Forall", false, res2);
 };
 Pit.Test.FSStringsTest.Init = function() {
-    var res = Pit.FSharp.Core.StringModule.Initialize(5)(function(i) {
-        return i.ToString();
-    });
+    var res = Pit.FSharp.Core.StringModule.Initialize(5)((function(i) {
+        return i.toString();
+    }));
     return Assert.AreEqual("StringModule Init", "01234", res);
 };
 Pit.Test.FSStringsTest.Iterate = function() {
     var str = "HE";
     var ch = "H";
-    return Pit.FSharp.Core.Operators.op_PipeRight(str)(function(str1) {
+    return Pit.FSharp.Core.Operators.op_PipeRight(str)((function(str1) {
         return Pit.FSharp.Core.StringModule.Iterate(function(c) {
             Assert.AreEqual("StringModule Iterate", ch, c);
             return ch = "E";
         })(str1);
-    });
+    }));
 };
 Pit.Test.FSStringsTest.IterateIndex = function() {
     var str = "HE";
-    return Pit.FSharp.Core.Operators.op_PipeRight(str)(function(str1) {
+    return Pit.FSharp.Core.Operators.op_PipeRight(str)((function(str1) {
         return Pit.FSharp.Core.StringModule.IterateIndexed(function(i) {
-            return function(c) {
-                return Assert.AreEqual("StringModule IterateIndex", c.ToString(), Pit.FSharp.Core.LanguagePrimitives.IntrinsicFunctions.GetString(str1)(i));
-            };
+            return (function(c) {
+                return Assert.AreEqual("StringModule IterateIndex", c.toString(), Pit.FSharp.Core.LanguagePrimitives.IntrinsicFunctions.GetString(str1)(i));
+            });
         })(str1);
-    });
+    }));
 };
 Pit.Test.FSStringsTest.Length = function() {
-    var str = Pit.FSharp.Core.Operators.op_PipeRight("HELLO")(function(str) {
+    var str = Pit.FSharp.Core.Operators.op_PipeRight("HELLO")((function(str) {
         return Pit.FSharp.Core.StringModule.Length(str);
-    });
+    }));
     return Assert.AreEqual("StringModule length", 5, str);
 };
 Pit.Test.FSStringsTest.Map = function() {
     var str = "hello";
-    var res = Pit.FSharp.Core.Operators.op_PipeRight(str)(function(str1) {
-        return Pit.FSharp.Core.StringModule.Map(function(c) {
-            return Pit.FSharp.Core.Operators.op_PipeRight((Pit.FSharp.Core.Operators.ToInt(c) + 5))(function(value) {
+    var res = Pit.FSharp.Core.Operators.op_PipeRight(str)((function(str1) {
+        return Pit.FSharp.Core.StringModule.Map((function(c) {
+            return Pit.FSharp.Core.Operators.op_PipeRight((Pit.FSharp.Core.Operators.ToInt(c) + 5))((function(value) {
                 return Pit.FSharp.Core.Operators.ToChar(value);
-            });
-        })(str1);
-    });
+            }));
+        }))(str1);
+    }));
     return Assert.AreEqual("StringModule Map", "mjqqt", res);
 };
 Pit.Test.FSStringsTest.Replicate = function() {
     var str = "XO";
-    var res = Pit.FSharp.Core.Operators.op_PipeRight(str)(function(str1) {
+    var res = Pit.FSharp.Core.Operators.op_PipeRight(str)((function(str1) {
         return Pit.FSharp.Core.StringModule.Replicate(5)(str1);
-    });
+    }));
     return Assert.AreEqual("StringModule Replicate", "XOXOXOXOXO", res);
 };
 Pit.Test.RegexTest.Create = function() {
@@ -211,7 +211,7 @@ Pit.Test.JsStringTest.CharCodeAt = function() {
 Pit.Test.JsStringTest.Concat = function() {
     var s = Pit.Test.JsStringTest.Create();
     var js = s.concat(" World");
-    return Assert.AreEqual("String Concat", "Hello World", js.ToString());
+    return Assert.AreEqual("String Concat", "Hello World", js.toString());
 };
 Pit.Test.JsStringTest.IndexOf = function() {
     var s = Pit.Test.JsStringTest.Create();

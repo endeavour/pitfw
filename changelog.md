@@ -1,6 +1,10 @@
 #Pit - F# to JS Compiler
 >Lets you code, debug and manage easily
 
+##Changelog v0.3.1 (4/13/2012)
+####Fixes
+* Added jQuery unit tests
+
 ###Changelog v0.3 (3/26/2012)
 ####Fixes
 * Closure variable when using new ctor for setting properties

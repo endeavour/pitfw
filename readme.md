@@ -10,7 +10,8 @@ Pit is F# to Javascript compiler that leverages the beauty of F# and also JavaSc
     * Support for mapping response text as JSON [Done]
     * Support for reading response XML
 * jQuery integration [Done]
-    * Additionally implement extension points in the compiler to modify the AST. [Partially done]
+    * Additionally implement extension points in the compiler to modify the AST. [Done]
+* D3 JS ([link](http://d3js.org "d3")) integration
 * F# views for ASP.NET MVC (Tomas Petricek's project)
 * HTML5 apis
 	* WebSocket [Done]

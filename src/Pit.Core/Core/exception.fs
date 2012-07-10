@@ -7,8 +7,8 @@
         val message : string
 
         [<Js>]
-        member x.Message
-            with get()          = x.message
+        member this.Message
+            with get()          = this.message
 
         [<Js>] new ()       = { message = ""; }
         [<Js>] new (msg)    = { message = msg;}
@@ -17,8 +17,8 @@
         val message : string
 
         [<Js>]
-        member x.Message
-            with get()          = x.message
+        member this.Message
+            with get()          = this.message
 
         [<Js>] new ()       = { message = ""; }
         [<Js>] new (msg)    = { message = msg;}
@@ -27,8 +27,8 @@
         val message : string
 
         [<Js>]
-        member x.Message
-            with get()          = x.message
+        member this.Message
+            with get()          = this.message
 
         [<Js>] new ()       = { message = ""; }
         [<Js>] new (msg)    = { message = msg;}
@@ -37,8 +37,8 @@
         val message : string
 
         [<Js>]
-        member x.Message
-            with get()          = x.message
+        member this.Message
+            with get()          = this.message
 
         [<Js>] new ()       = { message = ""; }
         [<Js>] new (msg)    = { message = msg;}

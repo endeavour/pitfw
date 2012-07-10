@@ -182,7 +182,7 @@ module IEnumerator =
 
         interface System.IDisposable with
             [<Js>]
-            member x.Dispose() = e.Dispose()
+            member this.Dispose() = e.Dispose()
 
     [<Js>]
     let filter (f:'a->bool) (e:IEnumerator<_>) =
@@ -206,7 +206,7 @@ module IEnumerator =
         let mutable curr = -1
         let mutable len = arr.Length
         [<Js>]
-        member x.Get() =
+        member this.Get() =
             if curr >= 0 then
                 if curr >= len then alreadyFinished()
                 else arr.[curr]
@@ -238,24 +238,24 @@ module IEnumerator =
         let mutable started = false
         interface IEnumerator<'T> with
             [<Js>]
-            member x.Current =
+            member this.Current =
                 check started;
                 (alreadyFinished() : 'T)
 
         interface System.Collections.IEnumerator with
             [<Js>]
-            member x.Current =
+            member this.Current =
                 check started;
                 (alreadyFinished() : obj)
             [<Js>]
-            member x.MoveNext() =
+            member this.MoveNext() =
                 if not started then started <- true;
                 false
             [<Js>]
-            member x.Reset() = noReset()
+            member this.Reset() = noReset()
         interface System.IDisposable with
             [<Js>]
-            member x.Dispose() = ()
+            member this.Dispose() = ()
 
     [<Js>]
     let Empty<'T> () = (new EmptyEnumerator<'T>() :> IEnumerator<'T>)
@@ -264,17 +264,17 @@ module IEnumerator =
         let mutable started = false
         interface IEnumerator<'T> with
             [<Js>]
-            member x.Current = v
+            member this.Current = v
         interface IEnumerator with
             [<Js>]
-            member x.Current = box v
+            member this.Current = box v
             [<Js>]
-            member x.MoveNext() = if started then false else (started <- true; true)
+            member this.MoveNext() = if started then false else (started <- true; true)
             [<Js>]
-            member x.Reset() = noReset()
+            member this.Reset() = noReset()
         interface System.IDisposable with
             [<Js>]
-            member x.Dispose() = ()
+            member this.Dispose() = ()
 
     [<Js>]
     let Singleton x = (new Singleton<'T>(x) :> IEnumerator<'T>)
@@ -282,17 +282,17 @@ module IEnumerator =
     type EnumerateFinally<'T> [<Js>](f, e:IEnumerator<'T>)=
         interface IEnumerator<'T> with
             [<Js>]
-            member x.Current = e.Current
+            member this.Current = e.Current
         interface IEnumerator with
             [<Js>]
-            member x.Current = (e :> IEnumerator).Current
+            member this.Current = (e :> IEnumerator).Current
             [<Js>]
-            member x.MoveNext() = e.MoveNext()
+            member this.MoveNext() = e.MoveNext()
             [<Js>]
-            member x.Reset() = noReset()
+            member this.Reset() = noReset()
         interface System.IDisposable with
             [<Js>]
-            member x.Dispose() =
+            member this.Dispose() =
                 try
                     e.Dispose()
                 finally
@@ -705,10 +705,10 @@ namespace Pit.FSharp.Core.CompilerServices
             | EmptyEnumerable
             interface IEnumerable<'T> with
                 [<Js>]
-                member x.GetEnumerator() = IEnumerator.Empty<'T>()
+                member this.GetEnumerator() = IEnumerator.Empty<'T>()
             interface IEnumerable with
                 [<Js>]
-                member x.GetEnumerator() = (IEnumerator.Empty<'T>() :> IEnumerator)
+                member this.GetEnumerator() = (IEnumerator.Empty<'T>() :> IEnumerator)
         [<Js>]
         let Generate openf compute closef =
             mkSeq (fun () -> IEnumerator.generateWhileSome openf compute closef)
@@ -741,7 +741,7 @@ namespace Pit.FSharp.Core.CompilerServices
         type FinallyEnumerable<'T> [<Js>](compensation: unit -> unit, restf: unit -> seq<'T>) =
             interface IEnumerable<'T> with
                 [<Js>]
-                member x.GetEnumerator() =
+                member this.GetEnumerator() =
                     try
                         let ie = restf().GetEnumerator()
                         match ie with
@@ -755,7 +755,7 @@ namespace Pit.FSharp.Core.CompilerServices
                         reraise()
             interface IEnumerable with
                 [<Js>]
-                member x.GetEnumerator() = ((x :> IEnumerable<'T>).GetEnumerator() :> IEnumerator)
+                member this.GetEnumerator() = ((this :> IEnumerable<'T>).GetEnumerator() :> IEnumerator)
 
         /// An optimized object for concatenating a sequence of enumerables
         [<Sealed>]
@@ -900,10 +900,10 @@ namespace Pit.FSharp.Core.CompilerServices
                     else
                         this.finish(); false
                 [<Js>]
-                member x.Reset() = IEnumerator.noReset()
+                member this.Reset() = IEnumerator.noReset()
             interface System.IDisposable with
                 [<Js>]
-                member x.Dispose() = ()
+                member this.Dispose() = ()
 
         [<Js>]
         let EnumerateWhile (g : unit -> bool) (b: seq<'T>) : seq<'T> =
@@ -945,10 +945,10 @@ namespace Pit.FSharp.Collections
             | EmptyEnumerable
             interface IEnumerable<'T> with
                 [<Js>]
-                member x.GetEnumerator() = IEnumerator.Empty<'T>()
+                member this.GetEnumerator() = IEnumerator.Empty<'T>()
             interface IEnumerable with
                 [<Js>]
-                member x.GetEnumerator() = (IEnumerator.Empty<'T>() :> IEnumerator)
+                member this.GetEnumerator() = (IEnumerator.Empty<'T>() :> IEnumerator)
 
         [<Js>]
         let mkDelayedSeq (f: unit -> IEnumerable<'T>) = mkSeq (fun () -> f().GetEnumerator())
