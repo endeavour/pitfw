@@ -1,6 +1,16 @@
 #Pit - F# to JS Compiler
 >Lets you code, debug and manage easily
 
+##Changelog 0.3.2 (7/10/2012)
+####Fixes
+* Changed jQuery to use fluent APIs
+* Issue with code gen for private/internal constructors fixed
+* Optimized code generation for F# lists
+* Changed namespace from Pit.Javascript to Pit.JavaScript
+* AST generation for field members fixed
+* Added "undefined" as a syntactic value when used from Global.undefined()
+* Added support for ignoring "OptionalArguments" with None
+
 ##Changelog v0.3.1 (4/13/2012)
 ####Fixes
 * Added jQuery unit tests
