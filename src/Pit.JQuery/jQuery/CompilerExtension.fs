@@ -55,7 +55,7 @@ module Extensions =
         interface Pit.Compiler.IAstParserExtension with
 
             member x.Projection ast fn =
-                printfn "%A" ast
+                //printfn "%A" ast
                 match ast with
                 | Ast.StringNode(Some(x)) when x = "this" -> Variable(x) |> Some
                 | Ast.New(x, [|Ast.StringNode(Some(y))|]) when y = "this" -> Ast.Call(x, [|Variable(y)|]) |> Some
