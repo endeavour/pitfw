@@ -19,7 +19,24 @@ module Extensions =
             | Ast.NewTupleNode([|StringNode(Some(x));y|]) ->
                 (x, y)
             | Ast.Call(Ast.Call(Ast.MemberAccess ("op_EqualsGreater",Ast.Variable "Pit.JavaScript.JQuery.Extensions"), [|StringNode (Some x)|]), [|y|]) ->
-                (x, y)
+                match y with
+                | Ast.Function(ft, [|Variable "tupledArg"|], Block(body)) ->
+                    let args = 
+                        body 
+                        |> Array.choose(fun f -> 
+                            match f with
+                            | Ast.DeclareStatement(v, MemberAccess(t, Variable "tupledArg")) ->
+                                Some(v)
+                            | _ -> None
+                        )
+                    let rest =
+                        body 
+                        |> Array.filter(fun f ->
+                            match f with
+                            | Ast.DeclareStatement(_, MemberAccess(_, Variable "tupledArg")) -> false
+                            | _ -> true)                    
+                    (x, Ast.Function(ft, args, Block(rest)))
+                | _ -> (x, y)
             | _ -> failwith "Unrecognized sequence in tuple formation for jQuery properties"
 
         let canTransform (n:Node) =
@@ -38,7 +55,7 @@ module Extensions =
         interface Pit.Compiler.IAstParserExtension with
 
             member x.Projection ast fn =
-                //printfn "%A" ast
+                printfn "%A" ast
                 match ast with
                 | Ast.StringNode(Some(x)) when x = "this" -> Variable(x) |> Some
                 | Ast.New(x, [|Ast.StringNode(Some(y))|]) when y = "this" -> Ast.Call(x, [|Variable(y)|]) |> Some
