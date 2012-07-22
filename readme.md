@@ -40,6 +40,8 @@ Additionally to create Vsix and setup, use the run.bat which executes a set of M
 
 * Visual Studio 2010 SDK [here](http://www.microsoft.com/download/en/details.aspx?displaylang=en&id=2680 "link")
 * Windows Installer XML (WiX) toolset 3.6 [here](http://wix.codeplex.com/releases/view/75656 "link")
+
+You can find the latest dlls from the [downloads](https://github.com/fsharp/pitfw/downloads "downloads") section. Make sure you have Pit 0.2 installed so you can replace the dlls with the new ones and make use of the existing project templates.
      
 ##How to contribute?
 If you would like to contribute to the Pit project you could take up any of the features that is available in the roadmap / any custom feature that you think would provide nice value. You can email fahad@pitfw.org for dicussing and getting started with it. Small note here, Pit team may be working on some of the features already, so it's at best to check once before you fork off and start on it.

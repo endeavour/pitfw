@@ -1,6 +1,11 @@
 #Pit - F# to JS Compiler
 >Lets you code, debug and manage easily
 
+##Changelog 0.3.3 (7/17/2012)
+####Fixes
+* Fixed jQuery code generation for dynamic typed array
+* Added docs for jQuery
+
 ##Changelog 0.3.2 (7/10/2012)
 ####Fixes
 * Changed jQuery to use fluent APIs
