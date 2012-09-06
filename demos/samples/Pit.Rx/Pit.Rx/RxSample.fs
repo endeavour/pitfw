@@ -3,7 +3,7 @@
     module RxSample =
         open Pit
         open Pit.Dom
-        open Pit.Javascript
+        open Pit.JavaScript
         open Pit.Dom.Html5
         #if DEBUG
         type HtmlEventArgs = System.Windows.Browser.HtmlEventArgs

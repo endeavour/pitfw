@@ -1,6 +1,6 @@
 ﻿namespace Pit.Chart
 open Pit
-open Pit.Javascript
+open Pit.JavaScript
 open Pit.Dom
 open Pit.Dom.Html5
 
