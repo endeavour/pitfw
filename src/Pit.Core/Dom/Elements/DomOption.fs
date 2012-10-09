@@ -33,7 +33,7 @@ type DomOption() =
     [<CompileTo("text")>]
     member x.Text
         with get() = ""
-        and set(v: bool) = ()
+        and set(v: string) = ()
 
     [<CompileTo("value")>]
     member x.Value

@@ -8,7 +8,7 @@ open System.Windows.Browser
         let eH = new EventHandler<HtmlEventArgs>(fun s e -> this.Trigger(e) )
 
         member x.Delegate
-                 with get () =  match multicast with None -> null | Some(d) -> (d :> System.Delegate)
+                 with get () =  match multicast with None -> null | Some(d) -> (d)
                  and  set v =  multicast <- (match v with null -> None | d -> Some d)
         member internal x.Trigger(arg:HtmlEventArgs) =
             match multicast with

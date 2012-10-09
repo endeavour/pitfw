@@ -7,14 +7,9 @@ open Pit.Javascript
 open System.Windows.Browser
 
 [<AllowNullLiteral>]
-type SVGClipPathElement  =
-    inherit SVGTransformableElement
-
-    val mutable element : ScriptObject
-
-    internal new (element) =
-        { inherit SVGTransformableElement(element); element=element }
-
+type SVGClipPathElement(element)  =
+    inherit SVGTransformableElement(element)
+    
     static member Of(el:DomElement) = 
         new SVGClipPathElement (el.InternalScriptObject)       
         
@@ -25,92 +20,55 @@ type SVGClipPathElement  =
     
 
 [<AllowNullLiteral>]
-type SVGDefsElement   =
-    inherit SVGTransformableElement
-
-    val mutable element : ScriptObject
-
-    internal new (element) =
-        { inherit SVGTransformableElement(element); element=element }
+type SVGDefsElement(element)   =
+    inherit SVGTransformableElement(element)
 
     static member Of(el:DomElement) = 
         new SVGDefsElement(el.InternalScriptObject)       
         
 
 [<AllowNullLiteral>]
-type SVGDescElement   =
-    inherit SVGElement
-
-    val mutable element : ScriptObject
-
-    internal new (element) =
-        { inherit SVGElement(element); element=element }
+type SVGDescElement (element)   =
+    inherit SVGElement (element)
 
     static member Of(el:DomElement) = 
         new SVGDescElement(el.InternalScriptObject)       
 
 
 [<AllowNullLiteral>]
-type SVGFontElement   =
-    inherit SVGElement
-
-    val mutable element : ScriptObject
-
-    internal new (element) =
-        { inherit SVGElement(element); element=element }
+type SVGFontElement (element)   =
+    inherit SVGElement (element)
 
     static member Of(el:DomElement) = 
         new SVGFontElement(el.InternalScriptObject)   
         
 
 [<AllowNullLiteral>]
-type SVGFontFaceElement   =
-    inherit SVGElement
-
-    val mutable element : ScriptObject
-
-    internal new (element) =
-        { inherit SVGElement(element); element=element }
-
+type SVGFontFaceElement (element) =
+    inherit SVGElement(element)
+    
     static member Of(el:DomElement) = 
         new SVGFontFaceElement(el.InternalScriptObject)    
-        
-        
-
+               
 [<AllowNullLiteral>]
-type SVGPolygonElement =
-    inherit SVGTransformableElement
-
-    val mutable element : ScriptObject
-
-    internal new (element) =
-        { inherit SVGTransformableElement(element); element=element }
+type SVGPolygonElement (element) =
+    inherit SVGTransformableElement(element)
 
     static member Of(el:DomElement) = 
         new SVGPolygonElement(el.InternalScriptObject)          
 
 
 [<AllowNullLiteral>]
-type SVGPolylineElement =
-    inherit SVGTransformableElement
-
-    val mutable element : ScriptObject
-
-    internal new (element) =
-        { inherit SVGTransformableElement(element); element=element }
+type SVGPolylineElement (element) =
+    inherit SVGTransformableElement (element)
 
     static member Of(el:DomElement) = 
         new SVGPolylineElement(el.InternalScriptObject)     
         
         
 [<AllowNullLiteral>]
-type SVGPathElement =
-    inherit SVGTransformableElement
-
-    val mutable element : ScriptObject
-
-    internal new (element) =
-        { inherit SVGTransformableElement(element); element=element }
+type SVGPathElement (element) =
+    inherit SVGTransformableElement (element)
 
     static member Of(el:DomElement) = 
         new SVGPathElement(el.InternalScriptObject)                  
@@ -129,13 +87,8 @@ type SVGPathElement =
 
         
 [<AllowNullLiteral>]
-type SVGLineElement =
-    inherit SVGTransformableElement
-
-    val mutable element : ScriptObject
-
-    internal new (element) =
-        { inherit SVGTransformableElement(element); element=element }
+type SVGLineElement(element) =
+    inherit SVGTransformableElement(element)
 
     static member Of(el:DomElement) = 
         new SVGLineElement(el.InternalScriptObject)                  
@@ -162,13 +115,8 @@ type SVGLineElement =
                 
                 
 [<AllowNullLiteral>]
-type SVGImageElement =
-    inherit SVGTransformableElement
-
-    val mutable element : ScriptObject
-
-    internal new (element) =
-        { inherit SVGTransformableElement(element); element=element }
+type SVGImageElement (element) =
+    inherit SVGTransformableElement (element)
 
     static member Of(el:DomElement) = 
         new SVGImageElement(el.InternalScriptObject)                  

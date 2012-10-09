@@ -16,42 +16,72 @@ module PitCodeCompiler =
         use pro = new FSharpCodeProvider()
         let opt = CompilerParameters()
         opt.GenerateInMemory <- true
-        depAssemblies
-        |> Seq.iter(fun asm ->
-            opt.ReferencedAssemblies.Add(asm) |> ignore
-        )
-        srcFiles |> Seq.iter(fun s -> opt.TempFiles.AddFile(s, true) |> ignore)
-        let res = pro.CompileAssemblyFromFile( opt, srcFiles )
+        opt.ReferencedAssemblies.AddRange(depAssemblies)
+        
+        // Needed for building against the silverlight pit DLLs
+        // TODO: Remove and add sourcemap support instead?
+        let additionalAssemblies = [|"System.Numerics.dll"|]
+        opt.ReferencedAssemblies.AddRange(additionalAssemblies)
+
+        srcFiles |> Seq.iter(fun fileName -> opt.TempFiles.AddFile(fileName, true) |> ignore)        
+
+        // Load all the dependencies so they can be resolved by the newly generated library
+        let dict = new Dictionary<_,_>()
+        AppDomain.CurrentDomain.AssemblyLoad.Subscribe(fun (args:AssemblyLoadEventArgs) ->
+          let asm : Assembly = args.LoadedAssembly
+          dict.[asm.FullName] <- asm         
+          ) |> ignore<IDisposable>
+                
+        // Populate the dictionary with the dependencies
+        for dependency in depAssemblies do
+          Assembly.LoadFrom(dependency) |> ignore
+
+        // These are all just for the silverlight compilation to work. Ideally we can remove them or at
+        // least resolve them in some way other than hard-coding
+        // TODO: Remove and add sourcemap support instead?
+        Assembly.Load("System.Numerics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089") |> ignore
+        Assembly.LoadFrom("""C:\Program Files (x86)\Microsoft Silverlight\5.1.10411.0\System.Windows.Browser.dll""") |> ignore
+        Assembly.LoadFrom("""C:\temp\pitapp2\PitApp2\bin\Debug\FSharp.Core.dll""") |> ignore
+
+        // Custom resolution - look in the dictionary we populated above
+        AppDomain.CurrentDomain.add_AssemblyResolve(new ResolveEventHandler(fun _ args ->
+          let success, asm = dict.TryGetValue(args.Name)
+          asm
+          ))
+
+        let res = pro.CompileAssemblyFromFile(opt, srcFiles)
         let errors = [for a in res.Errors do
                             if not(a.IsWarning) then
                                 yield a
-                         ]
+                     ]
         if errors.Length = 0 then
-                (errors, Some(res.CompiledAssembly))
-        else (errors, None)
+            (errors, Some(res.CompiledAssembly))
+        else (errors, None)       
 
-    let private (++) v1 v2   = Path.Combine(v1, v2)
-    let private assemblyDirectory = Path.GetDirectoryName(Assembly.GetCallingAssembly().CodeBase).Remove(0, 6)
+    let private (++) path1 path2 = Path.Combine(path1, path2)
     let private randomFile directory = directory ++ Path.GetRandomFileName() + ".dll"
 
     let private compile1 (srcFiles : string[]) (assemblies : string[]) (directory : string) (printAst : bool) =
-        let result = CompileFSharpString(srcFiles, assemblies)
-        let errors = fst result
-        let genAsm = snd result
-        if genAsm.IsSome then
-            let asm = genAsm.Value
-            let types = asm.GetExportedTypes()
-            let js = TypeParser.getAst types |> JavaScriptWriter.getJS
-            (*let js = seq {
-                for a in ast do
-                    if printAst then
-                        printfn "%A" a
-                    let jscript = JavaScriptWriter.getJS a
-                    yield jscript
-            }*)
-            (errors, js)
-        else
-            (errors, "")
+        let errors, genAsm = CompileFSharpString(srcFiles, assemblies)        
+        match genAsm with
+        | Some(asm) ->
+              // Explicitly reload the assembly here using LoadFrom because it forces the load of the dependencies
+              // (pit.core.dll etc)
+              
+//              for reference in assemblies do
+//                  Assembly.LoadFrom(reference) |> ignore<Assembly>
+              
+              let types = asm.GetExportedTypes()
+              let js = TypeParser.getAst types |> JavaScriptWriter.getJS
+              (*let js = seq {
+                  for a in ast do
+                      if printAst then
+                          printfn "%A" a
+                      let jscript = JavaScriptWriter.getJS a
+                      yield jscript
+              }*)
+              (errors, js)            
+        | None -> (errors, "")
 
     let Compile (srcFiles : string[]) (assemblies : string[]) (outputfile : string) (directory : string) (formatJs : bool) (printAst : bool)=
         let er, js = compile1 srcFiles assemblies directory printAst
@@ -67,7 +97,7 @@ module PitCodeCompiler =
             else
                 sw.Write(js)
 
-            printfn "Generated Output File %s" outputfile
+            printfn "Generated Output File %s" (Path.GetFullPath(outputfile))
         else
             eprintfn "%A" er
 
@@ -89,12 +119,12 @@ module PitCodeCompiler =
 
 
     let copyResourceFile (outputfile : string) (copyResource:bool) (asm:Assembly) =
-        if  copyResource then
-            match getExtResourceAttr asm with
-            | Some(attr) ->
-                getFileString attr.Name asm
-                |> writeToLocation outputfile attr.Name
-            | None -> ()
+        if copyResource then
+           match getExtResourceAttr asm with
+           | Some(attr) ->
+               getFileString attr.Name asm
+               |> writeToLocation outputfile attr.Name
+           | None -> ()
 
     let CompileDll (dllPath:String) (outputfile : string) (references:string[]) (formatJs : bool) (printAst : bool) (copyResource:bool) =
 
@@ -102,7 +132,7 @@ module PitCodeCompiler =
         |> Array.iter(fun r ->
                         Assembly.LoadFrom(r)
                         |> copyResourceFile outputfile copyResource
-                        )
+                     )
 
         AppDomain.CurrentDomain.add_AssemblyResolve(new ResolveEventHandler(fun s e ->
             let assemblies = AppDomain.CurrentDomain.GetAssemblies()

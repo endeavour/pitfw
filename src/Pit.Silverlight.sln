@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Pit.Compiler.Core.Silverlight", "Pit.Compiler.Core\Pit.Compiler.Core.Silverlight.fsproj", "{496A8BD0-56F2-47BD-B232-F0EBC77CD3D6}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Pit.Common.Silverlight", "Pit.Common\Pit.Common.Silverlight.fsproj", "{4A2422AA-2B1D-480E-BB07-7A1D90A5545F}"

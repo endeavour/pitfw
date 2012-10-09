@@ -30,17 +30,17 @@ type DomLink =
     member x.Media
         with get() =
             x.link.GetProperty<string>("media")
-        and set(v) = x.link.SetProperty("media", v.ToString().ToLower())
+        and set(v:string) = x.link.SetProperty("media", v.ToString().ToLower())
 
     member x.Rel
         with get() =
             x.link.GetProperty<string>("rel")
-        and set(v) = x.link.SetProperty("rel", v.ToString().ToLower())
+        and set(v:string) = x.link.SetProperty("rel", v.ToString().ToLower())
 
     member x.Rev
         with get() =
             x.link.GetProperty<string>("rev")
-        and set(v) = x.link.SetProperty("rev", v.ToString().ToLower())
+        and set(v:string) = x.link.SetProperty("rev", v.ToString().ToLower())
 
     member x.Type
         with get() = x.link.GetProperty<string>("type")

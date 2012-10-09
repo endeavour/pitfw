@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Pit.Runtime", "Pit.Runtime\Pit.Runtime.fsproj", "{C3A936E7-1A5C-4145-BF6D-D9955915424B}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Pit.Core.dbg", "Pit.Core.dbg\Pit.Core.dbg.fsproj", "{3572D127-CCF0-4D50-9290-594EBE002F1C}"

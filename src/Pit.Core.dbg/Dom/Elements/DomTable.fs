@@ -50,7 +50,7 @@ type DomTableData =
     member x.VAlign
         with get() =
             x.td.GetProperty<string>("vAlign")
-        and set(v) = x.td.SetProperty("vAlign", v.ToString().ToLower())
+        and set(v:string) = x.td.SetProperty("vAlign", v.ToString().ToLower())
 
 and DomTableHeader =
     inherit DomTableData
@@ -91,7 +91,7 @@ and DomTableRow =
     member x.VAlign
         with get() =
             x.tr.GetProperty<string>("vAlign")
-        and set(v) = x.tr.SetProperty("vAlign", v.ToString().ToLower())
+        and set(v:string) = x.tr.SetProperty("vAlign", v.ToString().ToLower())
 
     member x.DeleteCell(index: int) =
         x.tr.Invoke("deleteCell", [| box(index) |]) |> ignore

@@ -358,7 +358,7 @@ type DomFrame(scriptObj : ScriptObject) =
         new DomFrame(scriptObj)
 
     member x.Align
-        with get() =  scriptObj.GetProperty("align")
+        with get() =  scriptObj.GetProperty<string>("align")
         and set(v:string) = scriptObj.SetProperty("frameBorder", box(v))
 
     member x.ContentDocument

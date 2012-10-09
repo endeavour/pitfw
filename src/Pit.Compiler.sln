@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Pit.Common", "Pit.Common\Pit.Common.fsproj", "{D8471F0A-B4AC-45FB-A701-BBE23DF50814}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Pit.Compiler", "Pit.Compiler\Pit.Compiler.fsproj", "{765A6C28-75D6-435C-8953-5EC883F8BFF1}"

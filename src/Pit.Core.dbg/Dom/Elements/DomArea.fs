@@ -45,7 +45,7 @@ type DomArea =
 
     member x.NoHref
         with get() = x.area.GetProperty<bool>("noHref")
-        and set(v:string) = x.area.SetProperty("noHref", v.ToString())
+        and set(v:bool) = x.area.SetProperty("noHref", v.ToString())
 
     member x.PathName
         with get() = x.area.GetProperty<string>("pathName")

@@ -7,9 +7,9 @@ open System
 
 [<AutoOpen>]
 module Helpers =
-    let pitEnvVarialbe = "PitLocation"
+    let pitEnvVariable = "PitLocation"
 
-    let binPath = Path.Combine(Environment.GetEnvironmentVariable(pitEnvVarialbe, EnvironmentVariableTarget.User) , "bin")
+    let binPath = Path.Combine(Environment.GetEnvironmentVariable(pitEnvVariable, EnvironmentVariableTarget.User) , "bin")
     
     let pfcPath = Path.Combine(binPath,"pfc.exe")
 

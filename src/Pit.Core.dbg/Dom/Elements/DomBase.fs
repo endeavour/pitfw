@@ -5,14 +5,8 @@ open Pit
 open Utils
 
 [<AllowNullLiteral>]
-type DomBase =
-
-    inherit DomElement
-    val htmlEl: ScriptObject
-
-    internal new (htmlEl) =
-        { inherit DomElement(htmlEl); htmlEl=htmlEl }
-
+type DomBase (htmlEl:ScriptObject) =
+    inherit DomElement(htmlEl)   
 
     static member Of(el:DomElement) =
         new DomBase(el.InternalScriptObject)

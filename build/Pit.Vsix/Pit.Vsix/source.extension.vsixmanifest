@@ -7,13 +7,13 @@
     <Description xml:space="preserve">Template for creating Pit Application</Description>
     <Locale>1033</Locale>
     <SupportedProducts>
-      <VisualStudio Version="10.0">
+      <VisualStudio Version="11.0">
         <Edition>Ultimate</Edition>
         <Edition>Premium</Edition>
         <Edition>Pro</Edition>
       </VisualStudio>
     </SupportedProducts>
-    <SupportedFrameworkRuntimeEdition MinVersion="4.0" MaxVersion="4.0" />
+    <SupportedFrameworkRuntimeEdition MinVersion="4.0" MaxVersion="4.5" />
   </Identifier>
   <References />
   <Content>

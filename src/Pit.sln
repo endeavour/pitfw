@@ -1,17 +1,17 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Pit.Core", "Pit.Core\Pit.Core.fsproj", "{9075ED59-7975-4E2F-A44E-35FE8B4CABC8}"
-EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Pit.Common", "Pit.Common\Pit.Common.fsproj", "{D8471F0A-B4AC-45FB-A701-BBE23DF50814}"
-EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Pit.JQuery", "Pit.JQuery\Pit.JQuery.fsproj", "{32FB264F-02AA-4B4E-A9A2-336FADD575A3}"
-EndProject
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{62C90632-8032-4147-A72A-507C0C8AD801}"
 	ProjectSection(SolutionItems) = preProject
 		..\build.fsx = ..\build.fsx
 		Scripts\Pit.js = Scripts\Pit.js
 	EndProjectSection
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Pit.Core", "Pit.Core\Pit.Core.fsproj", "{9075ED59-7975-4E2F-A44E-35FE8B4CABC8}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Pit.Common", "Pit.Common\Pit.Common.fsproj", "{D8471F0A-B4AC-45FB-A701-BBE23DF50814}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Pit.JQuery", "Pit.JQuery\Pit.JQuery.fsproj", "{32FB264F-02AA-4B4E-A9A2-336FADD575A3}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Pit.Core.Ex", "Pit.Core.Ex\Pit.Core.Ex.fsproj", "{B4098448-0EA0-40E7-A399-113308C83A5C}"
 EndProject
