@@ -49,6 +49,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Net" />
     <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Browser" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>

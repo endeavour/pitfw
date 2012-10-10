@@ -94,20 +94,9 @@ pfc.exe test.fsproj /o:output.js /ft:true
                     Directory.SetCurrentDirectory(projFolderLoc)
                     let absolutePath = Path.GetFullPath(relativePath)
                     Directory.SetCurrentDirectory(currentDirectory)
-                    System.Diagnostics.Debug.Assert(File.Exists(absolutePath))
+                    System.Diagnostics.Debug.Assert(File.Exists(absolutePath), sprintf "%s does not exist" <| absolutePath)
                     absolutePath                    
-                   )
-                
-                    
-//TODO: What is this for?!
-//                |> Seq.map(fun x ->
-//                    let dll =
-//                        if x.Contains("\\") then
-//                            let xi = x.LastIndexOf("\\") + 1
-//                            outputFolderLoc ++ x.Substring(xi, x.Length - xi)
-//                        else x
-//                    dll
-//                )
+                   )                                   
                 |> Seq.toArray
 
             printfn "%A" assemblies

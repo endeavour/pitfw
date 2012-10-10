@@ -20,8 +20,8 @@ module PitCodeCompiler =
         
         // Needed for building against the silverlight pit DLLs
         // TODO: Remove and add sourcemap support instead?
-        let additionalAssemblies = [|"System.Numerics.dll"|]
-        opt.ReferencedAssemblies.AddRange(additionalAssemblies)
+//        let additionalAssemblies = [|"System.Numerics.dll"|]
+//        opt.ReferencedAssemblies.AddRange(additionalAssemblies)
 
         srcFiles |> Seq.iter(fun fileName -> opt.TempFiles.AddFile(fileName, true) |> ignore)        
 
@@ -39,9 +39,9 @@ module PitCodeCompiler =
         // These are all just for the silverlight compilation to work. Ideally we can remove them or at
         // least resolve them in some way other than hard-coding
         // TODO: Remove and add sourcemap support instead?
-        Assembly.Load("System.Numerics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089") |> ignore
-        Assembly.LoadFrom("""C:\Program Files (x86)\Microsoft Silverlight\5.1.10411.0\System.Windows.Browser.dll""") |> ignore
-        Assembly.LoadFrom("""C:\temp\pitapp2\PitApp2\bin\Debug\FSharp.Core.dll""") |> ignore
+//        Assembly.Load("System.Numerics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089") |> ignore
+//        Assembly.LoadFrom("""C:\Program Files (x86)\Microsoft Silverlight\5.1.10411.0\System.Windows.Browser.dll""") |> ignore
+//        Assembly.LoadFrom("""C:\temp\pitapp2\PitApp2\bin\Debug\FSharp.Core.dll""") |> ignore
 
         // Custom resolution - look in the dictionary we populated above
         AppDomain.CurrentDomain.add_AssemblyResolve(new ResolveEventHandler(fun _ args ->
@@ -54,9 +54,9 @@ module PitCodeCompiler =
                             if not(a.IsWarning) then
                                 yield a
                      ]
-        if errors.Length = 0 then
-            (errors, Some(res.CompiledAssembly))
-        else (errors, None)       
+        if errors.Length = 0
+          then (errors, Some(res.CompiledAssembly))
+          else (errors, None)       
 
     let private (++) path1 path2 = Path.Combine(path1, path2)
     let private randomFile directory = directory ++ Path.GetRandomFileName() + ".dll"
@@ -64,23 +64,19 @@ module PitCodeCompiler =
     let private compile1 (srcFiles : string[]) (assemblies : string[]) (directory : string) (printAst : bool) =
         let errors, genAsm = CompileFSharpString(srcFiles, assemblies)        
         match genAsm with
-        | Some(asm) ->
-              // Explicitly reload the assembly here using LoadFrom because it forces the load of the dependencies
-              // (pit.core.dll etc)
-              
-//              for reference in assemblies do
-//                  Assembly.LoadFrom(reference) |> ignore<Assembly>
-              
+        | Some(asm) ->              
               let types = asm.GetExportedTypes()
-              let js = TypeParser.getAst types |> JavaScriptWriter.getJS
-              (*let js = seq {
-                  for a in ast do
+
+              let ast = TypeParser.getAst types
+              let js = seq {
+                  for node in ast do
                       if printAst then
-                          printfn "%A" a
-                      let jscript = JavaScriptWriter.getJS a
+                          printfn "%A" node
+                      let jscript = JavaScriptWriter.nodeToJS node
                       yield jscript
-              }*)
-              (errors, js)            
+              }
+              let js = js |> Seq.fold (fun (sb:StringBuilder) str -> sb.Append(str)) (new StringBuilder())
+              (errors, js.ToString())            
         | None -> (errors, "")
 
     let Compile (srcFiles : string[]) (assemblies : string[]) (outputfile : string) (directory : string) (formatJs : bool) (printAst : bool)=
@@ -88,7 +84,6 @@ module PitCodeCompiler =
         if er.Length = 0 then
             use fs = File.Create(outputfile)
             use sw = new StreamWriter(fs)
-            //sw.Write(js)
 
             if formatJs then
                 let bjs = new JsBeautify(js, new JsBeautifyOptions())

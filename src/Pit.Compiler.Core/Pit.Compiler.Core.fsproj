@@ -41,10 +41,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="common\Utils.fs" />
-    <Compile Include="ast\JavaScriptWriter.fsi" />
-    <Compile Include="ast\JavaScriptWriter.fs" />
     <Compile Include="ast\AstParser.fsi" />
     <Compile Include="ast\AstParser.fs" />
+    <Compile Include="ast\JavaScriptWriter.fsi" />
+    <Compile Include="ast\JavaScriptWriter.fs" />
     <Compile Include="type\Common.fs" />
     <Compile Include="type\TypeParser.fsi" />
     <Compile Include="type\TypeParser.fs" />
