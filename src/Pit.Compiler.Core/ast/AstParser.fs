@@ -355,7 +355,7 @@ module AstParser =
                         match expr1 with
                         // we have some left exp to evaluate
                         | Some e -> traverse e map |> Some
-                        | None   -> Return(Block(args1 |> Array.map(fun a -> traverse a map))) |> Some
+                        | None   -> Block(args1 |> Array.map(fun a -> traverse a map)) |> Some
                     | _ -> None
                 match res with
                 | Some(r) -> r
