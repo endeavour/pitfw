@@ -6,18 +6,18 @@ open Pit.Compiler.Ast
 
 module JavaScriptWriter =
     let sb(str:String) = new StringBuilder(str)
-    let (@@) (str:string) (sb:StringBuilder) = sb.Append(str) |> ignore
+    let (@@) (str:string) (sb:StringBuilder) = sb.Append(str) |> ignore<StringBuilder>
 
     let append (str : String) (sb : StringBuilder) =
-        sb.Append(str) |> ignore
+        sb.Append(str) |> ignore<StringBuilder>
 
     let appendLine (str : String) (sb : StringBuilder) =
-        sb.AppendLine(str) |> ignore
+        sb.AppendLine(str) |> ignore<StringBuilder>
 
     let trim (x:string) =
         x.Trim([|' '; '\n'; '\t'; '\r'; ','|])
 
-    let writeToJS(astNode : Node) =
+    let nodeToJS(astNode : Node) =
         let rec traverse node =
             match node with
             | Int(i) ->
@@ -234,6 +234,6 @@ module JavaScriptWriter =
     let getJS(nodes : Node[]) =
         use sw = new System.IO.StringWriter()
         for n in nodes do
-            writeToJS n
+            nodeToJS n
             |> sw.Write
         sw.GetStringBuilder().ToString()

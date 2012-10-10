@@ -16,7 +16,11 @@ module PitCodeCompiler =
         use pro = new FSharpCodeProvider()
         let opt = CompilerParameters()
         opt.GenerateInMemory <- true
+        
+        opt.ReferencedAssemblies.Add("Pit.Common.dll") |> ignore<int>
+
         opt.ReferencedAssemblies.AddRange(depAssemblies)
+        
         
         // Needed for building against the silverlight pit DLLs
         // TODO: Remove and add sourcemap support instead?
@@ -32,6 +36,8 @@ module PitCodeCompiler =
           dict.[asm.FullName] <- asm         
           ) |> ignore<IDisposable>
                 
+        
+
         // Populate the dictionary with the dependencies
         for dependency in depAssemblies do
           Assembly.LoadFrom(dependency) |> ignore

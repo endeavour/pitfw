@@ -88,7 +88,10 @@ pfc.exe test.fsproj /o:output.js /ft:true
                                     yield el.Value + ".dll"
                                 else yield asmName + ".dll"
                 }
-                |> Seq.filter(fun x -> x.Contains("Pit"))
+                |> Seq.filter(fun asm -> asm.IndexOf("Pit", StringComparison.InvariantCultureIgnoreCase) >= 0)
+                // We reference pit.common explicitly to ensure we are using the same one that is referenced by the compiler
+                // otherwise we can't find the JsIgnore attributes etc because they are from different assemblies
+                |> Seq.filter(fun asm -> not <| asm.EndsWith("Pit.Common.dll", StringComparison.InvariantCultureIgnoreCase))
                 |> Seq.map (fun relativePath ->
                     let currentDirectory = Directory.GetCurrentDirectory()
                     Directory.SetCurrentDirectory(projFolderLoc)
